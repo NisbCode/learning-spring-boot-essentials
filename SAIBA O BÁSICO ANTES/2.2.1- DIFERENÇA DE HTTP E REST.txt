@@ -1,0 +1,9 @@
+https://www.treinaweb.com.br/blog/rest-nao-e-simplesmente-retornar-json-indo-alem-com-apis-rest/
+
+
+REST é um conceito arquitetural mt complexo, mas q no fim visa tirar vantagem de todas as características do protocolo HTTP, q é um protocolo de transporte. 
+O JSON é somente uma forma de representar informações q precisam ser transportadas de um lado p outro. Sendo assim, podemos utilizar o protocolo HTTP p 
+fazer o transporte de dados entre um cliente e um servidor.
+
+P conseguir utilizar o protocolo HTTP da forma correta, nós podemos adotar uma arquitetura baseada no REST. Agr, p fazer a representação das informações q 
+precisam ser transportadas através do protocolo HTTP em uma arquitetura REST, nós podemos utilizar o JSON.

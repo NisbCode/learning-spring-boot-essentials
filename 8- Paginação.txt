@@ -1,0 +1,76 @@
+#O QUE É#
+
+É uma forma de filtrar oq o cliente recebe ao escolher métodos q tragam muito conteúdo cm o findAll()
+
+
+#COMO FAZER#
+
+Indo na interface de repository q vc tem
+Ao inves de usar a extends do Crud, vc vai extends da PagingAndSortingRepository, contendo os msm parâmetros de antes(documento 6)
+Após isso, vá no método q vc quer e acrescente os parâmetros Pageable do org.springframework
+Ele deve ficar assim:
+
+    @GetMapping
+    public ResponseEntity<?> listAll(Pageable pageable) {
+        return new ResponseEntity<>(studentDAO.findAll(pageable), HttpStatus.OK);
+    }
+
+Dps disso, ao chamar o método ele já trará com algumas configurações padrão
+Tds nós podemos mexer(Existem outros tipos de paginação, envolvendo cursor e pá, seria bom ver melhor mais já q essa é a mais simples)
+
+
+#USANDO O PAGING#
+
+P usar nós devemos modificar a URL usando parâmetros, vc identifica eles por meio de uma interrogação "?" após ele, só usar oq vc quer modificar
+
+por ex assim:
+
+http://localhost:8080/students?page=0
+
+
+Pegando os elementos da 1 página
+E tendo essa documentação sobre ela:
+
+  "last": false,
+  "totalPages": 2,
+  "totalElements": 24,
+  "size": 20,
+  "number": 0,
+  "first": true,
+  "sort": null,
+  "numberOfElements": 20
+}
+
+Podemos definir muitas coisas
+Cm por ex de quanto em quanto vamos pegar: http://localhost:8080/students?page=0&size=2
+E assim ficaria a documentação:
+
+  "last": false,
+  "totalPages": 12,
+  "totalElements": 24,
+  "size": 2,
+  "number": 0,
+  "first": true,
+  "sort": null,
+  "numberOfElements": 2
+
+
+#MUDANDO O PADRÃO#
+
+P mudarmos o valor padrão, sem alterar na url, de uma paginação
+Precisamos criar uma casse c a configuração
+Ela vai ser o adaptador p fazer isso
+Cm essa classe vai servir p configuração, ela deve ter a anotação <11> e extends a classe do próprio SB q contem essa configuração: WebMvcConfigurerAdapter
+Nela vc deve sobreescrever o método addArgumentResolvers (ctrl+o)
+Tirar o super
+Usar a instancia criada .setFallbackPageable q é o método responsável pra quando vc n pôr nd
+Dentro dos parâmetros pôr new PageRequest q vai fazer c q vc possa pedir uma nova configuração, e aí é só colocar
+Dps disso vc adiciona oq fizemos na lista do parâmetro e pronto
+Ex.:
+
+    @Override
+    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
+        PageableHandlerMethodArgumentResolver phmar = new PageableHandlerMethodArgumentResolver();
+        phmar.setFallbackPageable(new PageRequest(0, 5));                                                       //<---O número em q as págs começam e de quanto em quanto separa
+        argumentResolvers.add(phmar);
+    }

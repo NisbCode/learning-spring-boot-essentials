@@ -1,0 +1,90 @@
+#O QUE É#
+
+Estamos documentando nossas APIs
+Tem cm fazer manualmente, mas é algo extremamente chato
+Então vamos usar o Swagger, ele vai documentar nossas APIs baseado no endpoint
+Detalhe q ele tb funciona em outras linguagens
+
+
+#PASSO 1#
+
+Primeiro nós vamos adicionar 2 dependencias:
+
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger2</artifactId>
+			<version>2.7.0</version>
+		</dependency>
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger-ui</artifactId>
+			<version>2.7.0</version>
+		</dependency>
+
+A 1 cria o swagger e a 2 permite a customização da interface
+
+#PASSO 2#
+
+Crie um novo pacote e uma nova classe q servirá p a configuração do Swagger
+Anotaremos essa classe cm <11> e <51>
+Crie um método anotado cm <48> q irá retornar um Docket
+Ali vamos dizer o diretório do nosso endpoint; dizer tudo que queremos desse endpoint, o regex no caso. No nosso arquivo de estudo é o /v1; finalizar a 1 parte c 
+.build; 
+Essa primeira parte foi relacionada ao select, a criação da documentação
+Agr vamos para os parametros gerais, só c isso colocado até agr n teremos cm acessar os métodos já q eles precisam de um token, então vamos complementar 
+dando uma configuração padrão p tds eles ao invés de só anotar cm <53> e lá dar cada exemplo
+Fazer uma configuração q já faça isso p tds
+Assim dps agt só vai precisar pegar o token, aquele q vc fez ao dar um post no login de um admin ou user
+A configuração se resume as msm coisas q tão na anotação <53> mas escritas diretamente na classe de configuração do swagger
+
+
+    @Bean
+    public Docket apiDoc() {
+        return new Docket(DocumentationType.SWAGGER_2)
+                .select()
+                    .apis(RequestHandlerSelectors.basePackage("br.com.devdojo.endpoint"))
+                    .paths(regex("/v1.*"))
+                    .build()
+                .globalOperationParameters(Collections.singletonList(new ParameterBuilder()
+                    .name("Authorization")
+                    .description("Bearer token")
+                    .modelRef(new ModelRef("string"))
+                    .parameterType("header")
+                    .required(true)
+                    .build()))
+                .apiInfo(metaData());   //Esse é o uso do método q vamos criar abaio p customizar a interface
+    }
+
+
+Também vamos ter um método q customiza a interface e retorna um ApiInfo
+N temos mt oq dizer aq, são decorações praticamente
+
+    private ApiInfo metaData() {
+        return new ApiInfoBuilder()
+                .title("Spring Boot Essentials By Nisb")
+                .description("The best thing I ever learned")
+                .version("1.0")
+                .contact(new Contact("Naty", "http://site.com.br", "email.de.enrolacao.@gmail.com.br"))
+                .license("Apache License Version 2.0")
+                .licenseUrl("https://www.apache.org/license/LICENSE-2.0")
+                .build();
+    }
+
+
+#COMO EXECUTAR#
+
+Bem, vc vai precisar do token q vc criou em uma das documentações
+Vc tem q ligar o servidor e seu app de internet, seja ele qual for 
+E colocar sua porta: localhost:8080
+Ir na sua classe de run e ctrl+shift+f10
+E procurar seu endereço numa linha assim: pertySourcedRequestMappingHandlerMapping : Mapped URL path [/v2/api-docs] onto method.....
+E assim criando sua URL p colocar no google
+
+http://localhost:8080/v2/api-docs
+
+Esse é o seu json
+Ele vai ser tranformado no seu: http://localhost:8080/swagger-ui.html
+
+E bem
+É isso ^^
+N esqueça de usar seu token p acessar os métodos e q o token se expira em um dia então tem q ficar renovando 

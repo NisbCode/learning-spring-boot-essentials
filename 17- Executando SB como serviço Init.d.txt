@@ -1,0 +1,40 @@
+#O QUE FALTA#
+
+Criarmos um jar p ser executado cm serviço em ambientes linux
+P isso teremos q adicionar uma pequena coisa nas dependencias
+De preferencia no fim dela
+Tb é aconselhavel q vc dê um nome p sempre q vc criar um jar
+P isso
+Vc tb deve setar nas configurações
+O fim do documento pom.xml deve estar assim:
+
+    <build>
+        <finalName>devdojo</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <executable>true</executable>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+
+
+Assim, quando executarmos o jar(Q foi definido no inicio do arquivo q seria em jar)
+
+
+#PASSO 1#
+
+Vá na aba do maven no canto direito
+Clique em clean e dps em packages
+Torça pra tds os santos q vc passe no test
+Se n, se fodeu, vá consertar
+Se s, vamos seguir
+
+
+#PASSO 2#
+
+Abra a pasta target e prontinho

@@ -1,0 +1,7 @@
+https://www.devmedia.com.br/json-tutorial/25275
+https://jsonplaceholder.typicode.com/posts
+
+É um modelo base de arquivos de banco de dados
+Ou seja
+Vc tem uma classe
+Transforma ela em JSON e pode levar pra qualquer outro sistema q ele vai ler aquelas informações

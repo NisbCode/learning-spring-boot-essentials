@@ -1,0 +1,104 @@
+#O QUE VAMOS FAZER#
+
+Vamos aprneder a acessar as URLs por meio do próprio java puro
+
+
+
+
+#PASSO 1#
+
+P criarmos uma conexão usando apenas coisas do próprio javaNós precisamos de um BufferedReader p ler oq chegará de resposta e um HttpURLConnection p
+nos conectarmos
+Apenas importe as classes e crie suas variáveis recebendo null
+
+
+
+
+#PASSO 2#
+
+Dps abra um try-catch c a classe URL do java.net e coloque a URL q está usando até agr e adicione uma variável local a essa URL
+E vamos usar essa variável .openConnection
+Isso vai retornar um URLConnection mas queremos usar HttpURLConnection
+Então vamos declarar a variável e fazer um cast
+
+
+
+
+#PASSO 3#
+
+E dps disso vamos dizer oq essa variável vai fazer, um get, um set, oq for
+            connection.setRequestMethod("GET");
+
+
+
+
+#PASSO 4#
+
+Temos q pensar tb q nosso projeto está td protegido, então teremos q ver cm entrar
+Iremos primeiro adicionar uma propriedade na conexão e vamos marcar ela cm Autorização
+Se tiver no insomnia, vá em timeline e olhe a parte em amarelo, na aba de autorização, pegue o Basic blá blá blá, copie e cole entre as aspas a seguir:
+            connection.addRequestProperty("Authorization" , "Basic SG9tZXI6ZGV2ZG9qbw=="); 
+PS(2).: Sem autorizar, dará erro 401
+PS(2).: No próx tópico mostra cm pegar o Basic de outra forma
+
+
+
+#FAZENDO O PASSO 4 DE FORMA AUTOMÁTICA P PEGAR O BASIC#
+
+Ps.: Existe uma forma de vc pegar o valor da autorização por meio de um método
+P isso teriamos q criar um método a parte, fora do método main
+Mas antes, temos q criar duas variáveis, cada uma c o nome e a senha de nosso usuário q contenha admin
+E no método vamos receber eles e criar uma variável q junte os dois, dps iremos criptografa-los e transforma-los no formato Base64:
+
+    private static String encodeUsernamePassword(String user, String password) {
+        String userPassword = user + ":" + password;
+        return new String(Base64.encodeBase64(userPassword.getBytes()));  // pegamos o Base64 vinda do org.apache
+    }
+Por fim, será só colocar no método de conexão mostrado anteriormente, uma chamada p o método:
+            connection.addRequestProperty("Authorization", "Basic " + encodeUsernamePassword(user, password));
+Se quiser ter ctz q é o msm valor q feito manualmente, só mandar um sout, mas só assim já funciona:
+            System.out.println(encodeUsernamePassword(user, password));
+
+
+
+
+#PASSO 5#
+
+E agr vamos usar o reader p pegar  o resultado disso
+            reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+
+
+
+
+#PASSO 6#
+
+E por ultimo vamos adicionar as respostas a um StringBuilder pq elas virão em linhas e n queremos assim
+O problema é q p isso precisamos percorrer as linhas, vamos usar um while p isso
+            StringBuilder jsonSB = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null){
+                jsonSB.append(line);
+            }
+            System.out.println(jsonSB.toString());
+
+
+
+
+#PASSO 7#
+
+E por fim, vamos fechar td usando o IOUtils do org.apache e caso a connecção ainda teja ligada, disconecte ela
+        }finally {
+            IOUtils.closeQuietly(reader);
+            if (connection != null){
+                connection.disconnect();
+            }
+
+
+
+
+#ERRO: CONEXÃO RECUSADA#
+
+Caso vc se depare c esse erro: java.net.ConnectException: Connection refused: connect
+Faça a seguinte coisa: 
+1- Rode seu servidor na classe normal
+2- SEM DESLIGAR ELE, rode a sua classe de test clicando na seta verde do lado da classe

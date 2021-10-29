@@ -1,0 +1,8 @@
+https://docs.microsoft.com/pt-br/azure/architecture/best-practices/api-design
+
+#RESUMO#
+
+Dá dicas sobre formas de colocar suas URis a modo de evitar erros 
+E dicas de como lidar c apagar dados de uma tabela
+Por ex criar versões diferentes q tenham essas mudanças
+Também resume o que é o HATEOAS  ===> Usa os links p se comunicar

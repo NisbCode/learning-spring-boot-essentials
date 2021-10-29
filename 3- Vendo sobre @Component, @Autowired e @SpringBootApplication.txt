@@ -1,0 +1,39 @@
+Classes usadas: DateUtil
+
+
+#CRIANDO UM FORMATADOR DE HORAS#
+
+Nessa aula estamos criando uma classe para formatar o horário, dessa vez apenas p exemplificar o uso de uma anotação
+Essa formatação serve p vc saber quando determinado método foi acessado
+Nessa classe importamos o LocalDateTime
+Porém, ele deve ser usado na versão 1.7 e estamos na 1.8
+por conta disso, precisamos ir na classe pom e criar um build com a configuração da nossa versão:
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+
+#TRABALHANDO COM AUTOWIRED#
+
+Ele é uma assinatura, então já sabe, pra saber cm ele é <7>
+Usamos nesse caso num contexto de trazernos a hr de determinado projeto assim q acessado, claro, a assinatura serviu apenas p dizer ao Spring Boot oq fazer c o
+objeto instânciado 
+Dps de instanciar ele em um dos métodos do endpoint
+Nós fomos até a classe q continha a formatação das datas e marcamos ela cm um <8>
+
+
+#CLASSE DE RUN#
+
+Nesse fim de aula, vimos algumas anotações novas e principalmente uma coisa
+Descobrimos q a classe q dá run tende a ter 3 anotações: <1>, <6> e <11>
+Por ser algo já de praste, decidimos pôr logo uma anotação substituindo as anteriores <2>

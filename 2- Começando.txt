@@ -1,0 +1,116 @@
+23/07/19 Sim, esse foi dificil
+
+#PRIMEIROS PASSOS#
+
+Antes de tudo saiba q aq vc tá criando um servidor inicialmente local(Ou seja, apenas no seu pc) e futuramente global
+Seu primeiro dever é colocar seu IntelliJ pra trabalhar com o maven, pq é c ele q trabalharemos
+P isso é mt simples, ao iniciar um projeto novo, dps de colocar o nome dele e p ele trabalhar c liguagem java, clique c o botão direito em cima do nome da pasta
+mais acima, aquela q fica c o nome do projeto, e selecione "Add Framework Suport", lá vc clica em maven e dê ok
+Dps disso, criamos o inicio de td a dor e sofrimento
+
+MAS, temos uma segunda forma de criar mais rápida: Vai na pasta de Spring Inicializator
+
+
+#O QUE FAÇO AGORA?#
+
+Depois disso vc deve ir no arquivo de pom.xml
+Ele será o responsável pelas dependências de seu projeto
+Dependencias são coisas q ajudam a fazer seu server funcionar da forma devida, meio q pluguins
+Nesse caso temos uma lista já pré-programada pelo William, mas no geral é uma boa q vc pesquise oq cada dependência faz
+
+
+#1 PASSO: INICIANDO O SERVER#
+
+Uma das primeiras classes que deve criar é a que dará run em todo o projeto
+Ela deve estar no pacote raiz de td o projeto, ou seja, sem estar em pasta alguma e sim no começo do projeto, isso vai impedir erros futuros, vulgo documento 3
+P ela fazer isso
+Ela deve ser uma classe c o método main e q use essa classe: 	SpringApplication     seguido de: 		.run(<Nome da classe>.class, args);
+Por fim, começará a sessão anotações
+Nesse caso ele deverá ter a anotação:		<1> 
+(Spoiler: posteriormente iremos alterar ela p: 	<2> pode começar usando essa)
+Nesse caso, estamos trabalhando com uma escola e os dados de cada estudante, então cm vc deve saber, precisaremos de uma classe Student c os dados base
+Nessa classe, é estritamente necessário q use os gtters and setters, se n, o programa n vai conseguir fazer o parse automático pra vc, vai dar o erro: JSON parse
+
+#O QUE SÃO ANOTAÇÕES#
+
+São formas de dizer p o Spring Boot oq ele deve fazer c aquele método, ou aquela classe
+Anotações ditam oq fazer
+Terei um documento apenas c anotações, então sempre que tiver uma, vá ate esse documento c o número q eu colocar
+
+
+#2 PASSO: ENDPOINT#
+
+Esse é o próximo passo pra criar um server
+Ter um endpoint
+Um endpoint será o caminho onde seus clientes vão parar p fazer aqueles determinados métodos
+Se um cliente quiser apagar um arquivo
+O código p dar um delete ficará aq junto c seus diretório
+É literalmente o ponto mais fundo q um cliente pode chegar
+Justamente por esses motivos, ele pede a assinatura <3> e <5>
+Pra começar vc deve criar um método o qual queira e cada método deverá ter seu diretório 
+
+
+#FAZENDO RODAR#
+
+Ao fim desse arquivo vc criou uma lista por meio de um servidor local
+Então p testar só pôr no google: http://localhost:8080/student/list
+E voialá
+Sua lista
+
+
+#PARA FUNCIONAR#
+
+É necessário q vc teja usando a anotação 
+O seu pom deve estar assim:
+
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>1.5.3.RELEASE</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+	<groupId>br.com.testes</groupId>
+	<artifactId>testandoSuaMae</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>testandoSuaMae</name>
+	<description>teste de SpringBoot</description>
+
+	<properties>
+		<java.version>1.8</java.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<scope>runtime</scope>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<executable>true</executable>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>

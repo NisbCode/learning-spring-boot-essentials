@@ -1,0 +1,121 @@
+HTTP, JSON: 	https://www.treinaweb.com.br/blog/rest-nao-e-simplesmente-retornar-json-indo-alem-com-apis-rest/
+
+
+#HTTP#
+
+Podem ser usados quando são realizadas novas requisições de um cliente a um sevidor na web. Tendo algumas características principais:
+
+>É um protocólo cliente servidor: Utiliza uma máquina de um cliente e um servidor de um site para fechar uma conexão pra que seu browser baixe td necessário
+p fazer c q um site abra, por ex, baixa o HTML, o CSS, o JavaScript e as imagens necessárias para renderizar a página solicitada
+
+>A comunicação entre o cliente-servidor é feita através de “mensagens HTTP”: Ou seja, é uma via de mão dupla, qnd o cliente faz um request(tenta entrar no 
+servidor) o servidor deve mandar uma response. Essa é a unica forma de manter uma conexão entre ambos
+
+>O protocolo HTTP por definição não é “keep alive”: A conexão de uma HTTP de padrão finaliza assim q o ciclo request-response é concluído, após isso a
+conexão morre automaticamente. Caso necessite de abrir ou ver algo diferente na página, uma nova conexão é aberta e se fecha dnv
+
+>O protocolo HTTP é utilizado de maneira assíncrona na maioria dos clientes: Isso quer dizer que, se você precisa disparar duas requisições para baixar dois 
+conteúdos distintos, o cliente pode disparar essas requisições ao mesmo tempo, sendo que cada uma delas pode ser respondida em um tempo diferente. 
+-CURIOSIDADE- Inclusive, qnd vc renderiza uma página, vc pd verificar este comportamento observando a aba “Network” do Web Inspector se vc usa browsers 
+baseados no WebKit/Blink, como o Chrome. 
+Nós precisamos apelar para callbacks (ou promisses ou observables) justamente por causa desta característica do 
+protocolo HTTP: nós precisamos de uma resposta do servidor, mas, pelo cliente fazer a requisição de maneira assíncrona, nós não sabemos exatamente qnd essa
+resposta vai chegar… Por isso criamos callbacks (ou promisses ou observables) para serem executados quando o ciclo request-response for finalmente concluído.
+
+>As conexões no protocolo HTTP são independentes: Cm as conexões são fechamas assim q um ciclo request-response é concluido, se torna impossível a 
+comunicação entre conexões q tão em curso ao msm tempo
+
+>O protocolo HTTP é “stateless”: Ou seja, ele n guarda estado das requisições. Isso é inviável, já q as conexões HTTP são independentes, assíncronas e, 
+principalmente, por n serem keep alive. Se a conexão é imediatamente fechada após sua utilização, cm podemos guardar alguma informação sobre ela? 
+É exatamente por essa característica do protocolo HTTP q acabamos utilizando técnicas (cm os cookies) p tentar guardar alguma informação necessária, cm o 
+usuário que está logado em uma aplicação por ex
+
+>O protocolo HTTP é semântico: os recursos q podem ser disponibilizados por um servidor HTTP (cm um página, por exemplo) podem ser acessados através de 
+URIs (Unique Resource Identifier), q podem ser “traduzidas” p URLs (Unique Resource Locator). O grande ponto é q um servidor Web pd disponibilizar n 
+somente páginas, ele tb pd, por ex, fazer um upload de um arquivo. Para traduzir oq deve ser feito no servidor, o protocolo HTTP disponibiliza algo q nós 
+chamamos de verbo ou método HTTP. A idéia é q esse verbo, associado ao request, indique oq deve ser feito no servidor
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+#VERBOS#
+
+Sei q é chato, mas vc vai precisar ao menos ler o último tópico p entender isso
+
+Nós temos vários verbos HTTP, mas os principais, de maneira sucinta, são:
+
+1) GET: 		Indica que um recurso será recuperado do servidor. Por exemplo, quando você solicita uma página pelo seu browser;
+
+2) POST: 		Indica que um recurso será inserido ou criado no servidor. Um upload de um novo arquivo, por exemplo;
+
+3) PUT: 		Substituir os dados de um determinado recurso. (Pode ser usado p atualizar e é mais utilizado q o PATCH)
+
+4) DELETE: 	Indica que um recurso será removido do servidor. Seria o equivalente a um delete em uma base de dados.
+
+5) PATCH:	Atualizar parcialmente um determinado recurso.
+
+6) HEAD:		Similar ao GET, mas utilizado apenas para se obter os cabeçalhos de resposta, sem os dados em si.
+
+7) OPTIONS:	Obter quais manipulações podem ser realizadas em um determinado recurso.
+
+Isso quer dizer que nós podemos invocar uma mesma URL (ou URI[tem no documento de rest sobre]) em uma requisição HTTP, porém, dependendo da atribuição
+do verbo HTTP, a requisição irá desempenhar uma tarefa diferente no servidor. O verbo HTTP acaba determinando a semântica – ou significado/intenção – da 
+requisição HTTP.
+
+
+#BOA PRÁTICA DOS VERBOS DE HTTP#
+
+Método		URI		Utilização
+GET		/clientes		Recuperar os dados de todos os clientes.
+GET		/clientes/id		Recuperar os dados de um determinado cliente.
+POST		/clientes		Criar um novo cliente.
+PUT		/clientes/id		Atualizar os dados de um determinado cliente.
+DELETE		/clientes/id		Excluir um determinado cliente.
+
+Cm boa prática, em relação aos métodos do protocolo HTTP, evite utilizar apenas o método POST nas requisições q alteram o estado no servidor, tais cm: 
+cadastro, alteração e exclusão, e principalmente, evite utilizar o método GET nesses tipos de operações, pois é comum os navegadores fazerem cache de requisições 
+GET, as disparando antes msm do usuário clicar em botões e links em uma pagina HTML.
+
+=======================================================================================
+
+
+#JSON#
+
+O JSON n é um protocolo de transporte de informações cm o HTTP. Ele é somente uma forma bem leve de representação e troca de informações. 
+Ele tem a única função de levar informações de um lado p o outro. Nós podemos utilizar o JSON p transportar informações entre mensagens HTTP.
+
+
+=======================================================================================
+
+
+#JSON x XML#
+
+O XML tb é uma forma de representação de informações. Porém, é uma forma mais “pesada” e verbosa de representação, já q preza pela “legibilidade” das 
+informações a serem representadas.
+
+Veja, por exemplo, um fragmento de um XML:
+
+<clientes>
+    <cliente>
+        <id>1</id>
+        <nome>TreinaWeb Cursos</nome>
+        <idade>10</idade>
+    </cliente>
+</clientes>
+
+A mesma informação acima poderia ser representada facilmente com o JSON abaixo:
+
+"clientes" : [
+    {
+        "id" : 1,
+        "nome" : "TreinaWeb Cursos",
+        "idade" : 10
+    }
+]
+
+Apesar de n ser tão explícita, o JSON é mt mais direto e simples do q o XML. Perceba tb a quantidade de caracteres utilizados em cada uma das representações 
+serem menores. Cm o JSON utiliza menos caracteres q o XML, ele tb vai ocupar menos bytes dentro de um response c relação ao XML e, por consequência, o 
+download de um response q contenha dados no formato JSON será mais rápido do q um response c as mesmas informações no formato XML. 
+Essa é uma das principais justificativas p os desenvolvedores preferirem utilizar JSON do que XML p o intercâmbio de informações.
+
+
+=======================================================================================

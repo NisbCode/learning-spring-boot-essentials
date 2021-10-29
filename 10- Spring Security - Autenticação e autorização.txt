@@ -1,0 +1,372 @@
+#COMO COMEÇAR(Aula 17)#
+
+Saiba que existem várias formas de trazer a segurança de seu servidor, token(Q está lá embaixo) ou esse q vc verá agr
+
+Antes de td precisamos importar a dependência:
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+
+Assim q colocar isso e vc reiniciar o servidor
+Vc vai ver q ele te dá uma senha básica
+Caso vc n use essa senha, ele já ira começar a não aceitar qualquer requerimento
+É necessário q vc use isso no seu postman/insomnia/oq for, na parte de autorização
+Com isso vc terá ao menos o mínimo de segurança no seu projeto
+
+
+#AUMENTANDO A SEGURANÇA#
+
+Pra isso vamos criar uma classe justamente pra configurar melhor a segurança
+Essa classe deverá ter a anotação <30> e <32> além de extends a classe WebSecurityConfigurerAdapter
+Nessa classe também deve ter dois métodos, um q é sobreescrito: configure(HttpSecurity
+E um método q vc usará p configurar q receberá um AuthenticationManagerBuilder
+E.: 
+    public void configureGlobal(AuthenticationManagerBuilder auth){
+    }
+
+É interessante que esse método tenha a anotação <7>, p q o SB faça a autprização antes do estudante chegar ao endpoint
+Dentro desse método vc trabalhará c autorização em memória
+Uma coisa q começamos fazendo é criar usuários c suas autorizações de user ou admin
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+No método sobreescrito vc irá configurar oq deseja, aqui autorizamos tds os pedidos de métodos e eles devem ser autenticados e dizer qual tipo de autorização
+Tb devemos dizer que o crsf tem q estar desativado
+Sem isso ocorrerá este erro:
+
+  "message": "Invalid CSRF Token 'null' was found on the request parameter '_csrf' or header 'X-CSRF-TOKEN'."
+
+Dps disso vc irá notar q p acessar os dados, vc deverá por o nick e senha de quem criou no outro método p ter a autorização
+
+
+
+
+#PERSONALIZANDO UM USUÁRIO(Aula 18)#
+
+P começar, devemos criar uma classe q será destinada a ter o atributos de um usuário, cm sua senha, seu username, etc
+Ela servirá p cuidarmos dos credenciais(identificação p autorizar)
+Ela deverá ser marcada cm <18>
+Seus atributos devem ter suas anotações
+Uma dica relevante é usar a anotação <34> no password
+E é recomendado tb q use a anotação <35> no user name p deixar ele cm apenas um
+Dps é necessário q vc faça o repository do user
+
+#CRIPTOGRAFANDO SUA SENHA#
+
+Crie uma classe separada na matriz do projeto junto da sua classe de run 
+Nessa classe vc irá criar, dentro do método main, uma chamada p a classe BCryptPasswordEncoder 
+Dps pegar a variável e .encode
+Já citando a senha
+Ex.:
+
+		    public static void main(String[] args) {
+		        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+		        System.out.println(passwordEncoder.encode("devdojo"));
+		    }
+
+Vc usará a senha criptografada na criação do user mas n em um imnsonia ou postman da vida
+
+
+#CRIANDO O REPOSITORY P O USER#
+
+Esse repository será criado q nem o anterior e terá apenas um método(por hr) de achar pelo nome
+Esse método servirar p qualificar o nome do usuário e por meio disso ele vai logar a pessoa
+Vc deve tá pensando "Mas e a senha?" temos um método, dentro duma classe q vamos criar p ter as configurações de segurança q fará a validação da senha
+
+P isso vc precisará de um CustomUserService
+Então vamos criar uma classe e implements UserDetailsService
+Nela implementaremos o método
+Esse método pede um repository
+Usaremos a interface de do usuário
+Marcaremos ela cm private final mas por isso precisaremos de um construtor, marque ele c <7> p q o SB cuide das dependências necessárias
+Mas p essa anotação funcionar precisamos marcar a classe cm ao menos um <8>
+Feito isso, voltaremos p o método e colocaremos o repository nele e dentro dele pegaremos o método findByUsername passando o username do método
+Cm teriamos q ficar lançando uma exceção caso o nome esteja errado, vamos usar um Optional c método de ofNullable e criar uma variável:
+
+		        User user = Optional.ofNullable(userRepository.findByUsername(username))
+
+Ao finalizar essa parte, daremos oq irá acontecer caso o username n seja o correto usando o método do Optional ".orElseThrow()"
+E usarmos um lambda dentro dele p lançar uma exceção c uma frase simples:
+
+		        User user = Optional.ofNullable(userRepository.findByUsername(username))
+		                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+Fim dessa primeira parte, iremos precisar tb de uma lista de autorizações
+Tem um método já do Spring q cria "AuthorityUtils" dá p usar o método de criar um Authority de admin e de user passando o ROLE de cada um, dps só criar uma
+variavél local
+Ps.: Ao criar a de admin, vc precisa colocar primeiro uma user e logo em seguida a admin, já q quem tem admin tem user mas ambos são privilégios diferentes:
+
+		        List<GrantedAuthority> authorityListAdmin = AuthorityUtils.createAuthorityList("ROLE_USER", "ROLE_ADMIN");
+		        List<GrantedAuthority> authorityListUser = AuthorityUtils.createAuthorityList("ROLE_USER");
+
+Por fim iremos retornar o User do Spring msm, ele vai adicionar o pacote td por isso, e de parâmetros iremos colocar as listas de autoridades, nome e senha:
+
+		    @Override
+		    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		        User user = Optional.ofNullable(userRepository.findByUsername(username))
+ 		               .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+		        List<GrantedAuthority> authorityListAdmin = AuthorityUtils.createAuthorityList("ROLE_USER", "ROLE_ADMIN");
+		        List<GrantedAuthority> authorityListUser = AuthorityUtils.createAuthorityList("ROLE_USER");
+		        return new org.springframework.security.core.userdetails.User(
+		                user.getUsername(),
+		                user.getPassword(),
+		                user.isAdmin() ? authorityListAdmin : authorityListUser);
+		    }
+
+
+E agora por ultimo, temos q configurar a Classe de configuração das seguranças
+Eliminando o método de configuração global já q ele era p quando usavamos a memória interna
+Iremos sobreescrever outro método, o configure q usa o AuthenticationManagerBuilder
+Tirar o super
+E agr precisamos do nossa classe customizada de seviço
+P isso vamos acima na classe, chamaremos nossa classe cm privado e marcando ela cm <7>
+Iremos no método sobreescrito e chamaremos o auth usando o método de usar o detalhe de serviço da variável da classe q pegamos, e chamamos tb o método
+de criptografia passando a classe usada p isso:
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(customUserDetailsService).passwordEncoder(new BCryptPasswordEncoder());
+    }
+
+E FINALMENTE, terminamos oq fazer p q o nosso user tenha seu nome e senha comparados ao login
+
+
+
+
+#PROTEÇÃO DAS URLS COM ANTMATCHER(Aula 19)#
+
+Cm sabemos, o documento q temos n tá de uma boa forma em relação as URLs
+Existem formas mais seguras nas URLs de se proteger, por ex, o uso do método AntMatchers
+Ele vai ver qual o padrão q vc tá usando e nisso permitir q apenas determinado user use
+O objetivo de agr é ir no seu endpoint e padrõnizar suas URLs de acordou c os roles de cada um
+Dps disso vc irá na sua classe se configuração de segurança
+No método de configuração c parâmetros de HTTP vc vai pôr o método .antMatchers("") e dentro das aspas duplas vc vai pôr algo assim:
+
+                .antMatchers("/*/protected/**").hasRole("USER")  //<---Isso significa q qq coisa q comece dps tenha protected e mais alguma coisa, user acessa(admin tb)
+                .antMatchers("/*/admin/**").hasRole("ADMIN")   //<---Qualquer coisa q comece dps tenha admin e mais alguma coisa, apenas admin acessa
+
+Lembre-se de nomear cada método seu c um padrão, inclusive a forma de acessar seu endpoint
+E tb q ao usar o método AntMatchers n precisamos mais da anotação <31>
+Ps.: Se lembre de ao usar os app p se passar pelos clientes, mudar as URLs
+
+
+
+
+=======================================================================================
+
+#AUTENTICAÇÃO VIA JWTToken Authentication(Aula 30)#
+
+Um token pega as informações e criptografa eles, dps gerar um hash e p criar(?) esse hash, agt precisa de uma chave
+
+#CAMINHOS#
+
+Quando trabalhamos com token
+Nós temos dois tipos de autenticação
+
+Authentication	- Diz quem vc é
+Authorization	- Diz oq vc pode fazer
+
+Sendo assim, normalmente se começa pela autenticação, já q, n faz sentido q vc saiba oq pode fazer sendo q nem sabemos quem vc é
+
+
+#PASSO 1: CLASSE DE AUTENTICAÇÃO#
+
+Crie uma classe na ala de configuração q sirva apenas p autenticar(Login basicamente) e ela vai extends a classe UsernamePasswordAuthenticationFilter
+Faça uma injeção da classe AuthenticationManager e um construtor p ela
+Sobreescreva dois métodos: attemptAuthentication e successfulAuthentication (Esse ultimo vai gerar nosso token)
+Dentro do attempt vc vai chamar sua classe user q irá ser instanciada pôr um cast do q vai vir de usuário
+Isso pq temos q ler oq tá dentro do body
+Q no caso seria o usuário e a senha
+P distrinchar isso, vamos usar o ObjectMapper() do fasterxml.database q irá ler esse input
+E devemos terminar dizendo qual a classe q pegaremos esses valores q virão em json
+Rodeie isso c try-catch
+E retorne a injeção e dela autorize pegando a senha e o usuário
+Uma boa pratica seria trocar a exceção lançada pelo catch por uma runtime
+
+
+#PASSO 2#
+
+Assim que o passo um for bem sucedido, ele irá procurar a autorização daquele usuário, então iremos p o segundo método
+P ele, nos precisamos de um gerador de webtoken no formato json
+Pegamos isso criando uma dependencia:
+
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt</artifactId>
+			<version>0.7.0</version>
+		</dependency>
+
+
+#PASSO 3: CLASSE P CRIAR A CHAVE#
+
+Crie uma classe
+Nela
+Teremos as informações basicas p criar uma chave
+Por ex qual é ela 
+O prefixo q o programa vai usar p identificar 
+O tipo q é aquilo
+O tempo de duração do token em milisegundos
+E uma URL q será permitida a tds
+Ela é usada pq tds podem fazer o login, tds devem fazer, então n precisa passar pela autenticação p autenticar. Essa URL vai conter o endereço do login
+TD ISSO FORA DO MAIN, pq neh, n temos ações, apenas informações
+
+Isso pq o Token segue um padrão
+Esse padrão é: Authorization Bearer <Hash>
+Então devemos ter uma chave q é o HEADER
+E os valores q é o prefixo + o hash
+
+    static final String SECRET = "DevDojoFoda";//Lembrete: N usei o public pq tamos no msm package
+    static final String TOKEN_PREFIX = "Bearer ";  //Esse é o prefixo necessário do token em si
+    static final String HEADER_STRING = "Authorization";  //Header 
+
+E os valores extras vão ficar assim:
+
+    static final String SIGN_UP_URL = "/users/sign-up"; //URL q vai ficar o login
+    static final long EXPIRATION_TIME = 86400000L;  //Tempode de expiração do token em milisegundos
+
+
+#PASSO 4: MÉTODO Q CRIA O TOKEN#
+
+Agr voltaremos p a classe de antes, q contia a parte de autenticar
+E vamos olhar p o segundo método sobreescrito: successfulAuthentication
+
+E nele vamos criar o token
+1, o token será uma string
+Então instanciamos a variável token q é uma String recebendo uma variável q tem um cast de uma classe User(DO SPRINGFRAMEWORK) pegando o username
+Esse username será carregado por um método da pasta de serviço, o loadByUsername ele compara o nome e a senha
+
+O token vai receber a classe JWTS; q vai ter o método de build; o de setar o objeto(no caso username); o de sertar o tempo em milisegundo e vai receber a 
+variável q criamos na outra classe staticamente; o de logar criptografando c uma classe(A classe SignatureAlgorithm q vai usar o algoritmo HS512, 
+<nome da chave q criou na outra classe>; e o compact(); q vai gerar o token c tds essas informações
+Por fim vc deve criar  a resposta usando response, nele deve ter o header, o prefix e a token
+
+Dica: Ao importar staticamente vc pode mudar o final do import por um * assim ele vai importar tds aqueles de uma vez
+
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+#PASSO 1: CLASSE DE AUTORIZAÇÃO#
+
+Crie uma classe q servitá p autorizar
+Nela vc vai extends a classe BasicAuthenticationFilter
+E injetar a classe q contenha o método loadUserByUsername sobreescrita nas aulas anteriores. Normalmente é a classe q contem os detalhes da classe User
+Criando o 1 construtor q o extends pede
+No caso: JWTAuthorizationFilter q tb deve conter a injeção colocada
+
+Dps vamos sobreescrever o método doFilterInternal
+Nele nós vamos filtrar a resposta e oq forpedido
+Começando c uma String q será instanciada pelo pedido chamando o Header
+E fazer um filtro pra caso o pedido chegue vazio
+
+E criar um método q pegue o token e irá dar cm resposta um UsernamePasswordAuthenticationToken
+Ele vai instanciar a String do token pelo pedido chamando o header 
+Fazer um filtro de se ele tá vazio ou n 
+E usar o JWTS p pegar o valor de dentro do token
+
+P isso nós vamos fazer um parse usando nossa chave 
+Dps recolhendo a resposta setando a nossa chave
+E logo, substituindo o prefixo por uma String vazia apenas p q assim agt tenha apenas as repostas msm
+Por fim nos entramos no body e pegamos nosso username
+P q logo em seguida noós colocamos isso nos detalhes de usuário
+E retornamos, se o username n for nulo, um novo UsernamePasswordAuthenticationToken q passa os detalhes de usuário, c credenciais null e pegando as roles
+
+    private UsernamePasswordAuthenticationToken getAuthenticationToken(HttpServletRequest request) {
+        String token = request.getHeader(HEADER_STRING);
+        if (token == null) return null;
+        String username = Jwts.parser().setSigningKey(SECRET)
+                .parseClaimsJws(token.replace(TOKEN_PREFIX, ""))
+                .getBody()
+                .getSubject();
+        UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
+        return username != null ?
+                new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities()) : null;
+    }
+
+
+#PASSO 2#
+
+Voltaremos no método doFilterInternal 
+E usaremos a resposta do passo anterior p fazer o filtro e nos dar a resposta:
+
+        UsernamePasswordAuthenticationToken authenticationToken = getAuthenticationToken(request);
+        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+        chain.doFilter(request, response);
+
+
+#PASSO 3#
+
+Agr p acabar nós devemos mudar a configuração de segurança do projeto
+Começando usando nosso método configure q é sobreescrito 
+Nele vamos trabalhar c a configuração http
+Liberar a url de login
+E usar os filtros
+
+
+#PASSO 4#
+
+Abra seu postman/insomnia e faça um post em json escrevendo seu username e senha ignorando a autorização q vc setou 
+{
+	"username" : "Homer",
+	"password" : "devdojo"
+}
+
+Vc vai lá na autorização e desliga ela 
+E coloque o path para: http://localhost:8080/login
+
+Ele vai gerar um Bearer e um hash
+Esse hash é o nosso token
+Vc vai copiar ele
+Ir no Header
+Colar no valor
+E escrever Authorization no anterior a isso 
+E aí é só vc fazer suas requisições
+Cada usuário tem uma chave diferente, então ao mudar, ele muda
+
+
+
+#DICA DE FACILIDADE E BOAS PRÁTICAS#
+
+No meio de um código, quem estiver trabalhando no frontend, pode ter dificuldades de pegar seu token
+Uma boa forma de deixar mais fácil p ele é colocar ela no body do método sobreescrito successfulAuthentication:
+
+        String bearerToken = TOKEN_PREFIX + token;
+        response.getWriter().write(bearerToken);
+        response.addHeader(HEADER_STRING, bearerToken);
+
+
+Deixando seu método +- assim:
+
+    @Override
+    protected void successfulAuthentication(HttpServletRequest request,
+                                            HttpServletResponse response,
+                                            FilterChain chain,
+                                            Authentication authResult) throws IOException, ServletException {
+        String username = ((org.springframework.security.core.userdetails.User) authResult.getPrincipal()).getUsername();
+        String token = Jwts
+                .builder()
+                .setSubject(username)
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .signWith(SignatureAlgorithm.HS512, SECRET)
+                .compact();
+        String bearerToken = TOKEN_PREFIX + token;
+        response.getWriter().write(bearerToken);
+        response.addHeader(HEADER_STRING, bearerToken);
+    }
+
+
+#COMO PEGAR UM USUÁRIO QUE NÓS TEMOS NO TOKEN(Aula 31)#
+
+Temos q ir na classe de endpoint
+No parâmetro q usar o userdatails
+Modificar para: Authentication authentication
+Isso pq n usamos a autenticação básica mais
+E dentro desse autentication vc terá as informações q precisa
+
+
+Msm se vc passasse na classe de Authorization, no método q pegue a autenticação e retorne o UsernamePasswordAuthenticationToken,
+Um objeto
+Vc poderia ainda s pegar 

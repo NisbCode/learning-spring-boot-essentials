@@ -1,0 +1,260 @@
+https://blog.caelum.com.br/rest-principios-e-boas-praticas/
+https://docs.microsoft.com/pt-br/azure/architecture/best-practices/api-design(Complementa o anterior e resume)
+
+#O QUE É#
+
+Representational State Transfer, abreviado como REST, n é uma tecnologia, uma biblioteca, e nem tampouco uma arquitetura, mas sim um modelo a ser utilizado 
+p se projetar arquiteturas de software distribuído, baseadas em comunicação via rede.
+
+REST é um dos modelos de arquitetura q foi descrito por Roy Fielding, um dos principais criadores do protocolo HTTP, em sua tese de doutorado e q foi adotado
+cm o modelo a ser utilizado na evolução da arquitetura do protocolo HTTP.
+
+Mts desenvolvedores perceberam q tb poderiam utilizar o modelo REST p a implementação de Web Services, c o objetivo de se integrar aplicações pela Web, e 
+passaram a utilizá-lo como uma alternativa ao SOAP.
+
+REST na vdd pode ser considerado cm um conjunto de princípios, q qnd aplicados de maneira correta em uma aplicação, a beneficia c a arquitetura e padrões da 
+própria Web.
+
+Possui apenas alguns poucos princípios e restrições q devem ser utilizados p se garantir algumas características importantes em aplicações e serviços, tais cm: 
+portabilidade, escalabilidade e desacoplamento.
+
+
+
+
+#IDENTIFICAÇÃO DOS RECURSOS#
+
+Td aplicação gerencia algumas informações. Uma aplicação de um E-commerce, por ex, gerencia seus produtos, clientes, vendas, etc. Essas coisas q uma aplicação 
+gerencia são chamadas de Recursos no modelo REST.
+
+Um recurso nd mais é do q uma abstração sobre um determinado tipo de informação q uma aplicação gerencia, sendo q um dos princípios do REST diz q td 
+recurso deve possuir uma identificação única. Essa identificação serve p q a aplicação consiga diferenciar qual dos recursos deve ser manipulado em uma 
+determinada solicitação.
+
+Imagine a seguinte situação: Vc desenvolveu um Web Service REST que gerencia seis tipos de recursos. Os clientes desse Web Service manipulam esses recursos via 
+requisições HTTP. Ao chegar uma requisição para o Web Service, como ele saberá qual dos recursos deve ser manipulado? É justamente por isso que os recursos 
+devem possuir uma identificação única, que deve ser informada nas requisições.
+
+A identificação é feita por meio de URI's
+
+
+
+
+#URI#
+
+A identificação do recurso deve ser feita utilizando-se o conceito de URI (Uniform Resource Identifier), q é um dos padrões utilizados pela Web. 
+Alguns ex de URI’s:
+
+	http://servicorest.com.br/produtos;
+	http://servicorest.com.br/clientes;
+	http://servicorest.com.br/clientes/57;
+	http://servicorest.com.br/vendas.
+
+As URI’s são a interface de utilização dos seus serviços e funcionam como um contrato que será utilizado pelos clientes para acessá-los
+
+<<<<<REGRAS:>>>>>
+
+					>Utilize URI’s legíveis:
+
+Ao definir uma URI, utilize nomes legíveis por humanos, q sejam de fácil dedução e q tejam relacionados c o domínio da aplicação. Isso facilita a vida dos clientes
+q utilizarão o serviço, além de reduzir a necessidade de documentações extensas.
+
+					>Utilize o mesmo padrão de URI na identificação dos recursos:
+
+Mantenha a consistência na definição das URI’s. Crie um padrão de nomenclatura para as URI’s dos recursos e utilize sempre esse msm padrão. Evite situações cm:
+
+	http://servicorest.com.br/produto (Singular);
+	http://servicorest.com.br/clientes (Plural);
+	http://servicorest.com.br/processosAdministrativos (Camel Case);
+	http://servicorest.com.br/processos_judidicais (Snake Case).
+
+					>Evite adicionar na URI a operação a ser realizada no recurso:
+
+Os recursos q uma aplicação gerencia podem ser manipulados de diversas maneiras, sendo p isso disponibilizada algumas operações p manipula-los, tais cm:
+criar, listar, excluir, atualizar, etc.
+
+A manipulação dos recursos deve ser feita utilizando-se os métodos do protocolo HTTP, q inclusive é um dos princípios do REST
+
+Portanto, evite definir URI’s q contenham a operação a ser realizada em um recurso, tais cm:
+
+	http://servicorest.com.br/produtos/cadastrar;
+	http://servicorest.com.br/clientes/10/excluir;
+	http://servicorest.com.br/vendas/34/atualizar.
+
+					>Evite adicionar na URI o formato desejado da representação do recurso:
+
+É comum q um serviço REST suporte múltiplos formatos p representar seus recursos, tais cm XML, JSON e HTML. A informação sobre qual o formato desejado por
+um cliente ao consultar um serviço REST deve ser feita via Content Negotiation.
+
+Portanto, evite definir URI’s q contenham o formato desejado de um recurso, tais como:
+
+	http://servicorest.com.br/produtos/xml;
+	http://servicorest.com.br/clientes/112?formato=json.
+
+					>Evite alterações nas URI’s:
+
+A URI é a porta de entrada de um serviço. Se vc a altera, isso certamente causará impacto nos clientes q tavam a utilizando, pois vc alterou a forma de acesso a ele.
+Após definir uma URI e disponibilizar a manipulação de um recurso por ela, evite ao máximo sua alteração.
+
+Nos casos mais críticos, no qual realmente uma URI precisará ser alterada, notifique os clientes desse serviço previamente. Verifique tb a possibilidade de se manter a
+URI antiga, fazendo um redirecionamento para a nova URI.
+
+
+
+
+#REPRESENTAÇÕES DOS RECURSOS (DESACOPLAMENTOS)#
+
+Os recursos ficam armazenados pela aplicação q os gerencia. Qnd são solicitados pelas aplicações clientes, por ex, em uma requisição do tipo GET, eles n 
+“abandonam” o servidor, cm se tivessem sido transferidos p os clientes. Na verdade, oq é transferido p a aplicação cliente é apenas uma representação do recurso.
+
+Um recurso pode ser representado de diversas maneiras, utilizando-se formatos específicos, tais cm XML, JSON, HTML, CSV, dentre outros.
+
+Essa comunicação feita via transferência de representações dos recursos gera um desacoplamento entre o cliente e o servidor, algo q facilita bastante a manutenção 
+das aplicações.
+
+
+
+
+#SUPORTE DIFERENTES REPRESENTAÇÕES#
+
+É considerada uma boa prática o suporte a múltiplas representações em um serviço REST, pois isso facilita a inclusão de novos clientes. Ao suportar apenas um tipo de formato, um serviço REST limita seus clientes, que deverão se adaptar para conseguir se comunicar com ele.
+
+Os três principais formatos suportados pela maioria dos serviços REST são:
+
+HTML;
+XML;
+JSON.
+
+
+
+
+#UTILIZE CONTENT NEGOTIATION PARA O SUPORTE DE MÚLTIPLAS REPRESENTAÇÕES#
+
+Qnd um serviço REST suporta mais de um formato p as representações de seus recursos, é comum q ele espere q o cliente forneça a informação de qual o formato 
+desejado. No REST, essa negociação do formato da representação dos recursos é chamada de Content Negotiation e no mundo Web ela deve ser feita via um 
+cabeçalho HTTP, conhecido cm accept.
+
+Ao fazer uma chamada ao serviço REST, um cliente pode adicionar na requisição o cabeçalho accept, p indicar ao servidor o formato desejado da representação do 
+recurso. Claro, deve ser um formato q seja suportado pelo serviço REST.
+
+
+
+
+#COMUNICAÇÃO STATELESS (ESCALABILIDADE)#
+
+A Web é o principal sistema q utiliza o modelo REST. Hj ela suporta bilhões de clientes conectados e trocando informações. Mas, cm é possível a Web ter uma 
+escalabilidade e performance tão boas, a ponto de conseguir suportar tamanho número de clientes sem problemas? Comunicação Stateless!
+
+Requisições feitas por um cliente a um serviço REST devem conter todas as informações necessárias p q o servidor as interprete e as execute corretamente. Clientes n 
+devem depender de dados previamente armazenados no servidor p processar uma requisição. Qualquer informação de estado deve ser mantida pelo cliente e n 
+pelo servidor. Isso reduz a necessidade de grandes quantidades de recursos físicos, cm memória e disco, e tb melhora a escalabilidade de um serviço REST.
+
+É justamente por essa característica que a Web consegue ter uma escalabilidade praticamente infinita, pois ela n precisa manter as informações de estado de cada um 
+dos clientes.
+
+Esse é um dos princípios mais difíceis de ser aplicado em um serviço REST, pois é muito comum q aplicações mantenham estado entre requisições de clientes. Um 
+ex dessa situação acontece qnd precisamos armazenar os dados dos usuários q tão autenticados na aplicação.
+Para isso evite manter dados de autenticação/autorização em sessão
+
+
+
+
+#EVITANDO MANTER DADOS DE AUTENTICAÇÃO/AUTORIZAÇÃO EM SESSÃO#
+
+A principal dificuldade em criar um serviço REST totalmente Stateless ocorre quando precisamos lidar c os dados de autenticação/autorização dos clientes. A 
+dificuldade ocorre pq é natural p os desenvolvedores armazenarem tais informações em sessão, pois essa é a solução comum ao se desenvolver uma aplicação Web 
+tradicional.
+
+A principal solução utilizada p resolver esse problema é a utilização de Tokens de acesso, q são gerados pelo serviço REST e devem ser armazenados pelos clientes, 
+via cookies ou HTML 5 Web Storage, devendo tb ser enviados pelos clientes a cada nova requisição ao serviço.
+
+Já existem diversas tecnologias e padrões para se trabalhar com Tokens, dentre elas:
+
+OAUTH;
+JWT (JSON Web Token);
+Keycloack.
+
+
+
+
+#HATEOAS (HYPERMEDIAS AS THE ENGINE OF APPLICATION STATE)
+
+Imagine q vc quer comprar um produto pela Web, em algum site de E-commerce. Vc entra no site, navega pelas categorias de produtos via menu do site, encontra 
+o seu produto e chega até a tela de detalhes dele, q possui as informações de preço, frete e o botão para realizar a compra.
+
+Mas nem sempre o produto tá disponível em estoque, por isso o site costuma fazer um tratamento nessa situação, escondendo o botão de realizar a compra e 
+exibindo um botão para notificação qnd o produto voltar a estar disponível.
+
+No ex anterior, o conceito de HATEOAS foi aplicado duas vezes. Primeiro, qnd o cliente entrou no site de E-commerce, cm ele fez para chegar até a página de 
+detalhes do produto? Navegando via links.
+
+Normalmente td site ou aplicação Web possui diversas funcionalidades, sendo q a navegação entre elas costuma ser feita via links. Um cliente até pode saber a URI 
+de determinada página ou recurso, mas se ele n souber precisamos guiá-lo de alguma maneira p que ele encontre as informações q procura.
+
+O segundo uso do HATEOAS ocorreu qnd o cliente acessou a página de detalhes do produto. Se o produto tivesse em estoque, o site apresentaria o botão de 
+comprar, e o cliente poderia finalizar seu pedido. Caso contrário, ele apenas poderia registrar-se p ser notificado. Td isso é feito, principalmente, p garantir a 
+consistência das informações.
+
+Perceba q os links foram utilizados cm mecanismo p conduzir o cliente quanto à navegação e ao estado dos recursos. Esse é o conceito q foi chamado de 
+HATEOAS, q nada mais é do q a utilização de Hypermedia, c o uso de links, cm o motor p guiar os clientes quanto ao estado atual dos recursos, e também quanto 
+as transições de estado q são possíveis no momento.
+
+Veja um ex de uma representação de um recurso sem a utilização do conceito de HATEOAS:
+
+	<pedido>
+	  <id>1459</id>
+	  <data>2017-01-20</data>
+	  <status>PENDENTE</status>
+	  <cliente>
+	    <nome>Rodrigo</nome>
+	  </cliente>
+	</pedido>
+
+No ex anterior foi apresentado a representação do recurso “Pedido” no formato XML, contendo suas informações, mas sem o uso do HATEOAS. 
+Isso certamente pode gerar algumas dúvidas para os clientes desse serviço REST, cm por ex:
+
+É possível solicitar o cancelamento do pedido? Como?
+Quais são os outros estados do pedido e como transitar entre eles?
+Como obter mais informações sobre o cliente desse pedido?
+
+Essas dúvidas poderiam ser respondidas facilmente se o conceito HATEOAS fosse utilizado, facilitando assim a vida dos clientes do serviço REST. 
+Vejamos agora a mesma representação, porém com a utilização do HATEOAS:
+
+	<pedido self="http://servicorest.com.br/pedidos/1459">
+	  <id>1459</id>
+	  <data>2017-01-20</data>
+	  <status>PENDENTE</status>
+	  <cliente ref="http://servicorest.com.br/clientes/784" />
+	  <acoes>
+	    <acao>
+	      <rel>self</rel>
+	      <uri>http://servicorest.com.br/pedidos/1459</uri>
+	      <method>GET</method>
+	    </acao>
+	    <acao>
+	      <rel>cancelar</rel>
+	      <uri>http://servicorest.com.br/pedidos/1459</uri>
+	      <method>DELETE</method>
+	    </acao>
+	  </acoes>
+	</pedido>
+
+Perceba cm agr ficou mt mais simples explorar as informações e descobrir quais caminhos seguir. HATEOAS é um dos princípios que dificilmente vemos sendo 
+aplicados em serviços REST no mercado, quase sempre por falta de conhecimento dos desenvolvedores.
+
+
+
+
+#DICAS#
+
+Tds os conceitos do modelo REST descritos nesse post podem tb ser utilizados na implementação de aplicações Web, e n somente nos casos de integração de 
+sistemas via Web Services.
+
+Inclusive se vc utilizar esses conceitos em uma aplicação Web tradicional, e um dia ela precisar se tornar uma API REST, o impacto das mudanças será mínimo, pois 
+sua aplicação já tará seguindo os princípios REST. Oq mudará é que agr ao invés de devolver p os clientes apenas páginas HTML ela tb pode devolver as 
+informações dos recursos em algum formato, cm o JSON, e o cliente é quem vai se preocupar em cm formatá-los.
+
+Qnd uma aplicação ou serviço segue os princípios descritos nesse artigo, ela é chamada de RESTful. Alguns puristas consideram apenas cm RESTful a aplicação ou 
+serviço q seguir tds os princípios do REST, inclusive os menos utilizados, cm comunicação Stateless e HATEOAS.
+
+Mas, não foque em ser ou n considerado RESTful, e sim em tentar utilizar o máximo possível dos princípios REST, p q sua aplicação ou serviço obtenha tds os 
+benefícios desse modelo.

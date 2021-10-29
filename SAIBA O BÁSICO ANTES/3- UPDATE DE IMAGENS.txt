@@ -1,0 +1,17 @@
+https://www.devmedia.com.br/armazenando-imagens-no-mysql/32104
+
+
+Pelo link:		https://www.youtube.com/watch?v=DtC_KfU6b1o&t=446s
+
+Vimos que o primeiro passo pra q se construa um recebimento de arquivos é a criação de um endpoint c um método o qual será responsável por receber o arquivo
+Tb deverá ter um repository q armazenará esses arquivos no BD
+
+Para enviar vc vai no body e seleciona multpart form do insominia
+Dps vc muda a key para o nome q vc deixou no meu método (No meu caso pic pq é oq o requestparam vai usar 
+E seleciona o valor como file 
+
+
+https://stackoverflow.com/questions/47526592/saving-images-using-spring-boot-and-mysql
+https://www.callicoder.com/spring-boot-file-upload-download-jpa-hibernate-mysql-database-example/
+
+https://grokonez.com/spring-framework/spring-boot/springboot-upload-multiple-files-to-mysql-example-thymeleaf-spring-jpa-audit

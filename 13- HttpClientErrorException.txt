@@ -1,0 +1,49 @@
+Continuação da aula do documento anterior na parte de put and delete
+Decidi fazer esse documento pq ele n tem lá mt a ver c o assunto anterior 
+
+
+#E SE TIVERMOS UMA EXCEPTION: HttpClientErrorException#
+
+Teriamos a opção de criar um try-catch em todos os métodos do dao, mas ficaria feio e gastaria mts linhas
+Então vamos fazer da forma correta
+
+
+
+
+#PASSO 1#
+
+Crie uma classe que extends a classe DefaultResponseErrorHandler
+Adicione a anotação <23> na classe
+Sobreescreva (ctrl+o) dois métodos: hasError e handleError
+
+P q vc apenas demonstre quando entrou em cada método
+Vamos simular algo p q entenda oq acontece
+
+
+#PASSO 2: SOBRE GETBODY#
+
+Ps.: Ao usar o 	response.getBody();	ele retorna um input mutcho loko
+Então p evitar q vc vá p pqp pra distrinchar isso   (PS.: DPS ELA DÁ ERRO E AÍ NÓS MUDAMOS P OUTRA DEPENDENCIA)
+Existe uma dependencia q ajuda:
+
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.5</version>
+		</dependency>
+
+Agora, vamos usar a dependencia importada chamando o: IOUtils(apache.io.communs)
+
+IOUtils.toString(response.getBody(), "UTF-8"));
+
+
+#PASSO 3#
+
+Devemos voltar no nosso restTemplate e adicionar o objeto criado nos RestTemplates:
+
+            .errorHandler(new RestResponseExceptionHandler())
+
+
+#DICA INTERESSANTE PQ C CTZ VC VAI QUERER ISSO#
+
+Se tu quiser tirar a kralha desse erro embaixo , só apagar o super no método "handleError" criados da classe handler

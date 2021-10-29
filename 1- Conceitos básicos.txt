@@ -1,0 +1,1 @@
+A função do Spring Boot é vc conseguir criar um projeto com pouca configuração

@@ -1,0 +1,34 @@
+Existe uma forma de longe mais rápida de criar um servidor
+Ela seria usando este link:
+
+https://start.spring.io/
+
+
+Nele vc colocará o projeto p maven
+A versão q será usada
+Nome do projeto
+As dependencias necessárias
+
+Vou ser sincera, essa solução me deu erro
+Então eu copiei a pasta de teste que vem ao fazer isso do start.spring.io e colei na pasta de teste
+Tb copiei a pasta .mvn(acho q é esse o nome) e colei no msm lugar q seria no projeto q eu já tinha aberto pelo IntelliJ
+Abri o arquivo de test
+E na anotação: @SpringBootTest
+Eu coloquei: @SpringBootTest(classes = ApplicationStart.class)
+Ou seja, eu coloquei isso e na parte de = eu coloquei o nome da classe q dá run no meu projeto
+Cm por ex o arquivo da pasta resources
+Isso resolveu um dos erros
+O outro eu resolvi tirando o "flux" no arquivo pom de uma dependência
+Ex.:
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-webflux</artifactId>
+		</dependency>
+
+Ficou:
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>

@@ -1,0 +1,84 @@
+#PRA QUÊ#
+
+Eles ajudama previnir a quantidade de erros possíveis 
+
+
+#O QUE SÃO#
+
+Essa aula serão os testes de repository
+
+
+
+#PASSO 1: INÍCIO DE TUDO#
+
+Vamos usar a pasta criada do Spring Boot para testes
+Criaremos uma classe
+E marcaremos a classe com a anotação <38> e <39>
+
+
+#PASSO 2: ESCOLHAS#
+
+Temos duas opções
+Usarmos nosso próprio banco de dados p fazer os testes
+Ou usar um banco de memória
+
+Próprio BD = Assim que terminar, será feito um rollback de toda execução a transação
+BD de memória = Assim não precisamos nos preocupar com alterações feitas no banco de dados, então td vez que executarmos terá um bd pronto p nós usarmos
+
+
+
+#PASSO 1: BANCO DE MEMÓRIA#
+
+Para isso, nós vamos colocar uma dependencia nova:
+
+		<dependency>
+			<groupId>io.projectreactor</groupId>
+			<artifactId>reactor-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+#PASSO 2#
+
+Injete a classe p test, nesse caso fizemos c o StudentRepository e marcamos ela com <7>:
+
+    @Autowired
+    private StudentRepository studentRepository;
+
+
+#PASSO 3: REGRAS#
+
+Dps disso nós vamos criar uma regra para o test
+Nós vamos esperar que ocorra determinada exception em um método, e se não tiver, ele será considerado falho
+Usaremos a classe: ExpectedException
+E marcaremos essa linha de comando pela anotação <40>
+
+
+#PASSO 4: TEST COM DICAS IMPORTANTES PARA SABER#
+
+Iremos criar agr um método marcado cm <41> 
+Seu nome deverá ser em inglês e apresentar uma leitura exclarecedora do que ele faz
+
+Ps.: Sertifique-se que na class Student ou a q vc usar p receber as informações, q tem um construtor, pq se n, vc n pode criar um agr
+E bem
+Primeiro instancie a classe dita acima
+E nela aplique oq for pedido no construtor 
+Abaixo use o this.<classe injetada de repository>.<nome do método>();
+E vamos fazer a asserção, nesse caso por meio do Assertions(org.assertj) ele irá se assegurar de algo(Porém, vc pode importar ele staticamente, fizemos isso)
+Por ex., nesse caso, se o id não é nulo ou se o nome é igual ao q colocamos nos parâmetros do Student
+Isso tudo são formas de testar 
+
+PS.(IMPORTANTE): Esse passo a passo explicado foi p criarmos um usuário e vermos se ele foi criado c seu nome, verificando ID e até vendo se o nome foi o msm
+Não se preocupe que ele faz o Rollback quando terminar o método
+ROLLBACK é quando ele volta ao padrão anterior de quando o método começou, por isso é necessario que você crie algo e o salve apenas p o test
+
+
+#PASSO 5: INICIE O TEST#
+
+Tá esperando que eu escreva oq aq? Vai, só apertar no play verdo do lado do método
+NÃO É NECESSÁRIO ESTAR C O SERVER LIGADO, pq tamos trabalhando c apenas memória por enquanto
+
+
+#USANDO O PRÓPRIO BANCO DE DADOS#
+
+É só colocar uma anotação <42> na classe
+Ps.: Alguns métodos da forma q estão podem falhar pq eles tão testando p ter determinado valor fixo

@@ -1,0 +1,8 @@
+#ORDENANDO CAMPOS NA BUSCA#
+
+Cm na ultimo documento(8- Paginação) nós extendemos a classe PagingAndSortingRepository
+Nós já temos a parte de sort, q é a necessária p ordenação
+
+Então a única coisa q precisamos mexer é por meio da URL
+P ordenar os nomes de forma ascendente: 	http://localhost:8080/students?sort=name,asc
+O nome e o email de forma ascendente: 	http://localhost:8080/students?sort=name,asc&sort=email,asc

@@ -1,0 +1,29 @@
+#O QUE É#
+
+É basicamente o status de cada ação, os erros, se foi okay ou n
+
+
+#DICA RÁPIDA DE INDEXOF#
+
+A lógica dele vai de -1 p não encontrado e outros p encontrado
+É bem útil em momentos de busca
+
+#COMO FAZER#
+
+Veremos aq oq é necessário pra criar um status code
+Primeiramente, vc irá retornar uma resposta, então na construção de seu método deve ter o tipo: ResponseEntity<?>
+O caractér coringa será substituido dependendo de cm funcionará seu método
+Ao decorrer do body do seu método, deverá ter um momento onde deverá retornar um ResponseEntity<> dnv, mas dessa vez ele deverá estar acompanhado de 
+um HttpStatus.<o tipo de status>
+Os tipos de status variam de OK até NOT_FOUND
+Ex.:
+
+    @RequestMapping(method = RequestMethod.GET, path = "/{id}")
+    public ResponseEntity<?> getStudentById(@PathVariable("id") int id) {
+        Student student = new Student();
+        student.setId(id);
+        int index = Student.studentList.indexOf(student);
+        if (index == -1)
+            return new ResponseEntity<>(new CustomErrorType("Student not found"), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(Student.studentList.get(index), HttpStatus.OK);
+    }

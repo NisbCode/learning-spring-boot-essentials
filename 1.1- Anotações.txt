@@ -1,0 +1,146 @@
+1- 	@EnableAutoConfiguration 	=> Vai falar p o String procurar oq fazer c essa classe baseado nas dependências q vc baixou
+Por ex.: Ao pôr isso numa classe q dá run, o Spring Boot irá procurar oq fazer pra fazer c q aquela classe dê run
+
+2- 	@SpringBootApplication    	=> É a mistura de 3 assinaturas justamente por elas de comum estarem juntas no msm local, a ckasse q tem o run.
+Ela mistura @ComponentScan, @EnableAutoConfiguration e @Configuration
+
+3-	@RestController		=> É usado em endpoint. Ele tem uma diferença p o Controller, o fato dele dentro já adiciona o <4> p tds métodos
+
+4- 	@ResponseBody		=> Diz q vc vai ter q fazer uma conversão do seu resultado p json e mudar no corpo daquela requisição
+Lembrete: JSON é uma ""linguagem"" neutra pra transporte de informações, temos mais sobre no "SAIBA O BÁSICO ANTES"
+
+5- 	@RequestMapping("")	=> Dentro das aspas vc coloca o diretório p q nós/o cliente possa acessar o caminho até a classe c os métodos
+No nosso caso: StudentEndpoint e o valor colocado é @RequestMapping("v1")
+
+6-	@ComponentScan(<base> = "")	=> Ao criar um Server local, é necessário pôr essa assinatura na classe p q ele saiba onde ter q procurar p pegar aquele
+método. Caso contrário ocorrerá um erro 404. Dentro das aspas vc põe o diretório da classe de seu endpoint, fora a base q vc vai usar, nesse ex.: basePackages
+PORÉM, se o run já estiver FORA de pastas, e sim já na raiz do projeto, n precisa pôr os parâmetros, só @ComponentScan puro
+
+7-	@Autowired		=> Ele serve pra fazer a injeção de dependências e instância um Objeto, ele praticamente toma conta do q der p ele
+
+8-	@Component		=> Avisa p o Spring q determinada classe deve ser vista pelo ComponentScan
+
+9- 	@Repository		=> Deve ser utilizada quando vc tiver trabalhando c o Dao pq ele vai fazer c q as exceções q vc n checou possam ser
+traduzidas usando uma classe (Confirma pf se é classe mesmo)
+
+10-	@Service			=> Serve mais p dizer q aquelas classes serão classes de serviço
+
+11-	@Configuration		=> Vai fazer a configuração levando em conta as classes q vc definir de configuração
+Por ex.: Vc pode tá fazendo as configurações em xml e o Spring quer q seja java, essa anotação faz essa mudança p agt
+
+12- 	@PathVariable		=> Procura por um determinado valor q der. 
+Ou seja, se quiser procurar algo pelo ID, coloque: @PathVariable("id") Long id
+
+13- 	@RequestBody		=> Quer dizer q vc espera determinado valor no body do método
+No nosso caso, um objeto do tipo Student
+
+14- 	@GetMapping		=> Serve p dizer p o SB q vc vai usar o tipo GET c aquele método, isso poupa de escrever isso: 
+method = RequestMethod.GET
+
+15-	@PostMapping		=> Msm coisa q antes só q p post
+
+16-	@DeleteMapping		=>   "        "      "     "      "  "  "  delete
+
+17-	@PutMapping		=>   "        "      "     "      "  "  "  put
+
+18-	@Entity			=> Mapeia a classe onde será colocada p uma tabela (no MySQL no nosso caso) c msm nome e msm informações
+
+19-	@MappedSuperclass		=> Marca uma classe p n ser criada no BD, apenas estendida
+
+20-	@Id			=> Diz q aquele atributo é um ID
+
+21-	@GeneratedValue		=> Diz q aquele atributo será gerado pelo próprio BD dependendo de q forma vc diga q deve. 
+No nosso caso foi de forma automática, ou seja, @GeneratedValue(strategy = GenerationType.AUTO)
+
+22-	@ResponseStatus		=> Faz com que determinada classe tenha já de comum a resposta de status q vc mandar de parâmetro
+No nosso caso: @ResponseStatus(HttpStatus.NOT_FOUND)      Retornará quando a classe de erro for usada, automaticamente o HTTP não encontrado
+
+23-	@ControllerAdvice		=> Permite q usemos essa classe pelas diversas camadas do SB fazendo c q o corpo seja o msm de erro em td o app
+
+24-	@ExceptionHandler		=> Deve ser colocada no método q deve ser executado caso o @ControllerAdvice detecte aquele erro o qual foi 
+mandado. Essa anotação pede parâmetros, no nosso caso usamos esse: @ExceptionHandler(ResourceNotFoundException.class)        o parâmetro é a classe de erro
+q contém a mensagem, no meu caso: ResourceNotFoundException
+
+25-	@Transactional		=> Marca aquele método p estar em transação, preservando a atomicidade(ao importar ele pegue do annotations)
+Ele trabalha apenas com Exceções do tipo unchecked, se quiser q ele trabalhe c checked tb, vc tem q dizer assim: @Transactional(rollbackFor = Exception.class)
+
+26-	@NotEmpty		=> Obriga q determinado campo não possa ser nulo
+
+27-	@Valid			=> Verifica se está td condizente em relação aos campos recebidos, se n tiver ele lança uma exceção. Deve ser posto 
+num parâmetro de um método
+
+28-	@Email			=> Cria aquele atributo cm email e vê se é um email válido
+
+29-	@Override		=> Mostra q aquele método foi sobreescrito
+
+30-	@EnableWebSecurity		=> Já é bem na cara q ele serve p dar possibilidade de segurança de dados online
+
+31-	@PreAuthorize("hasRole('?')")	=> É uma forma simples de pedir uma autorização p acessar determinado método. No lugar da interrogação deve ter
+qual o tipo de autorização a pessoa deve ter("USER" ou "ADMIN"). Ele deve ser colocado acima do método. Ele exige q vc coloque a anotação <32>
+
+32-	@EnableGlobalMethodSecurity	=> Permite q a anotação 31 funcione. Ela deve ser colocada na classe onde tem a configuração de segurança. Tb pede
+um complemento ficando desta forma: @EnableGlobalMethodSecurity(prePostEnabled = true)
+
+33-	@AuthenticationPrincipal	=> Mostra os detalhes de determinado usuário, caso vc teja usando um padrão de erro, vc deve dizer a ele a classe 
+desses detalhes
+
+34-	@JsonIgnore		=> Manda o SB ignorar determinado conteúdo do atributo ao ir p outro app usando o JSON. Isso impede q, por ex,
+a senha fique transitando por aí
+
+35-	@Column			=> É usada p especificar determinada coluna c uma nomeclatura ou propriedade. Dentro dela podemos pôr coisas cm
+Unique, q determinará aquela coluna cm unique key (Para saber mais sobre: https://codesjava.com/jpa-column-annotation)
+
+36-	@JsonProperty("")		=>  É usada p especificar determinado atributo c um valor, sendo q aquele atributo já é existente. Cm se settasse eles
+ou pegasse aquele atributo já existente p q vc trabalhe em cima. Vc coloca o nome do já existente entre aspas e cm ele vai ficar no seu logo em seguida, assim:
+                            @JsonProperty("number") int page
+
+37-	@JsonDeserialize()		=> É c ela q deserializamos classes p podermos usar, por ex, num sort. Seu uso acrescenta c oq iremos deserializar,
+normalmente é uma classe a qual customizando, um ex de cm fica: @JsonDeserialize(using = CustomSortDeserializer.class)
+
+38-	@RunWith()		=> Usada na pasta de test p startar uma classe. Ela pede uma classe para que seja iniciada usando aquela classe. Ex.:
+@RunWith(SpringRunner.class) ou @RunWith(SpringJUnit4ClassRunner.class)
+
+39-	@DataJpaTest		=> Ela adiciona uma série de configurações que facilitam a criação de tests. Normalmente utilizadas numa classe de 
+test(Pasta test)(Foi usada p configurações de repository apenas)
+
+40-	@Rule			=> Marca a linha abaixo cm uma linha de regra em classes de testes, ela funciona determinando qual parâmetro será
+usado para decidir se o test foi validado ou ocorreu um equívoco
+
+41-	@Test			=> Indica q aquele método é um test
+
+42-	@AutoConfigureTestDatabase	=> Usado para indicar que o modo usado de test será com dados de um banco de dados existente. Sua sintaxe fica
+assim: @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+
+43-	@SpringBootTest		=> Adiciona algumas configurações p essa classe de test de endpoint sendo tb uma anotação q diz cm vai ficar a 
+entrada p sua endpoint. Seu exemplo mais comum de uso é: @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+Assim ela tá dizendo q a cada login será gerada uma port diferente e aleatória p q a endpoint n fique ocupada
+
+44-	@LocalServerPort		=> Mostra qual é a porta q tá sendo usada con base na criada com o <43>
+
+45- 	@TestConfiguration		=> Marca aquela linha de código cm uma configuração padrão p o test
+
+46-	@MockBean		=> Ele vai simular oq colocarmos abaixo dele p q n altere nd real, ele vai simular q vc alterou ao usar tal método
+mas no fundo está td cm antes
+
+47-	@AutoConfigureMockMvc	=> É colocado na classe quando usa-se o MockMvc. O nome já é autoexplicativo
+
+48-	@Bean			=> Faz a injeção das dependencias, normalmente é colocado em uma configuração padrão
+
+49-	@Before			=> Fala q determinado método será executado antes q os outros. Foi usado na classe de test
+
+50-	@WithMockUser		=> Serve p q vc possa pôr as configurações de usuário num método q usa mockMvc. Sua estrutura normalmente fica 
+assim: @WithMockUser(username = "xx", password = "xx", roles = {"USER","ADMIN"}) (Dica: Se vc n pôr o role, ele vai pôr cm user)
+
+51-	@EnableSwagger2		=> Diz q aquela classe é a classe de configuração do swagger
+
+52-	@ApiOperation		=> Ajuda quem estiver criando os clientes pro endpoint a ter uma descrição dos métodos. Exemplo de como ficaria 
+um listAll @ApiOperation(value = "Return a list with all students", response = Student[].class)  Aqui ele diz oq o método faz e se vc der o tipo de resposta, na hr
+ele tb vai fazer um pequeno exemplo de cm criar
+
+53-	@ApiImplicitParams		=> Anota o método do endpoint cm tendo uma configuração única de token p q vc consiga entrar nele. A estrutura 
+fica +- assim:  @ApiImplicitParams({
+		@ApiImplicitParam(name = "Authorization", value = "Bearer token", required = true, dataType = "string", paramType = "header")})
+
+54-	@Size			=> Diz qual o número minimo e máximo que o usuário deve pôr ali.     
+		@Size(message = "Envie um nome de no mínimo 3 caracteres", min = 3)
+		    private String name;

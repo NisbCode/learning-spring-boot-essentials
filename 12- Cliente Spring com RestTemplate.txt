@@ -1,0 +1,288 @@
+#O QUE FAREMOS#
+
+Criar a conexão do ultimo documento de forma mais simples e feita pelo SB usando RestTemplate 
+Nós tamos fazendo assim pq assim dá p podermos pegar dados de uma API externa, ou seja, outro app
+Usar pelo insomnia é apenas p testar
+
+
+
+
+=======================================================================================
+#GET#
+
+Vamos fazer o msm método de pegar um determinado dado pelo id
+
+
+
+
+#COMEÇANDO#
+
+Primeiro vamos importar a classe RestTemplate e colocarmos sua variável recebendo um novo RestTemplateBuilder
+C os métodos: .rootUri() q terá a URI
+.basicAuthorization() q terá o nome e a senha
+E .build();
+Em segundo lugar, vá na classe q contenha o produto ou aluno ou oq for q queira pegar, e acrescente o toString(alt+insert)
+Dps só usar a variável criada c o método ou getForObject ou get for Entity
+Cada um tem diferença
+
+
+#GETFOROBJECT X GETFORENTITY#
+
+.getForObject	=> Retorna diretamente o objeto, se vc tiver trabalhando c sestudante spor ex, ele já vai te retornar ele p vc mexer
+.getForEntity	=> Ele retona o objeto q vc tiver trabalhando encapsulado num ResponseEntity e ele enclui métodos interessantes, tipo o de status e etc
+
+
+
+
+#USANDO O OBJECT#
+
+Vc pega a variável .getForObject e coloca ou logo o id q quer, ou a representação dele, no caso /{id}
+Dps vc coloca a classe a qual contem oq vc quer pegar, seus atributos e etc, e dps o id q vc quer caso n tenha colocado antes:
+
+        Student student = restTemplate.getForObject("/{id}", Student.class, 1);
+
+Dps só startar e se quiser verificar mostrando c um sout a variável colocada, no meu caso, usamos student
+
+
+
+
+#USANDO ENTITY#
+
+Msm coisa, porém o retorno muda e oq vc recebe tb
+        ResponseEntity<Student> forEntity = restTemplate.getForEntity("/{id}", Student.class, 1);
+
+Mas se vc quiser pegar o produto/student/sl oq q esteja dentro do forEntity, vc vai ter q usar .getBody no sout
+        System.out.println(forEntity.getBody());
+
+
+
+
+#ERRO DE URI NÃO SER ABSOLUTA#
+Quando vc ver isso, provavelmente vc errou ao colocar a URI
+O / deve ficar dps do getFor e n na URI: Assim: 
+
+                .rootUri("http://localhost:8080/v1/protected/students")
+        Student student = restTemplate.getForObject("/{id}", Student.class, 1);
+
+Não assim: 
+
+                .rootUri("http://localhost:8080/v1/protected/students/")
+        Student student = restTemplate.getForObject("{id}", Student.class, 1);
+
+
+
+
+=======================================================================================
+#LISTALL SEM PAGEABLE#
+
+Retornar tds os estudantes por ex numa lista sem a separação por indices de página e etc
+
+
+
+
+#PASSO 1#
+
+Começamos retirando o pageable do método no endpoint de listAll
+Isso porque ele altera o tipo de retorno
+E ao alterar, n podemos fazer o parse automaticamente
+
+SE ESTIVER ASSIM:
+
+    @GetMapping(path = "protected/students")
+    public ResponseEntity<?> listAll(Pageable pageable) {
+        return new ResponseEntity<>(studentDAO.findAll(pageable), HttpStatus.OK);
+    }
+
+
+FICA: 
+
+    @GetMapping(path = "protected/students")
+    public ResponseEntity<?> listAll(Pageable pageable) {
+        return new ResponseEntity<>(studentDAO.findAll(), HttpStatus.OK);
+    }
+
+
+#PASSO 2#
+
+Dps é preciso fazer uma chamada direta do método get(listAll no caso) usando o .getForObject, porém, usando uma lista p receber
+Ex.:
+
+        Student[] students = restTemplate.getForObject("/", Student[].class);
+
+
+#PASSO 3#
+
+É necessário também q retire o id já q tamos mexendo c uma lista 
+Mas p verficar temos q transformar numa String:
+
+        System.out.println(Arrays.toString(students));
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#OUTRA FORMA DE FAZER O MSM#
+
+Sabe o .getForEntity? Então, é parecido
+Ali acima usamos o Object
+Agr usaremos o exchange q é parecido c o Entity
+E nos oferece mais opções tb
+
+#PASSO 1#
+
+Chame a variável contendo o RestTemplate e use o método exchange, nela vc colocará a URL, q no caso por ser uma lista, contém apenas a barra
+Coloque o tipo de método, no nosso caso get
+Coloque nulo caso vc n teja colocando nenhuma entidade, coloque nulo, tipo nosso caso q apenas tamos chamando uma
+Coloque o Parameterized q faz c q vc possa colocar o Objeto diretamente c as coleções do java, isso tb difere esse método do anterior
+E acrescente uma variável local:
+
+        ResponseEntity<List<Student>> exchange = restTemplate.exchange("/", HttpMethod.GET, null, new ParameterizedTypeReference<List<Student>>() {
+        });
+
+
+Dps só chamar:
+
+        System.out.println(exchange.getBody());
+
+
+
+
+=======================================================================================
+#LISTALL COM PAGEABLE#
+
+Retorna tds os valores paginados e c tamanhos q definirmos
+
+
+
+
+#PASSO 1#
+
+Coloque o pageable de volta no endpoint (Se lembre q ao fazer isso, os métodos de antes não funcionarão)
+
+
+#PASSO 2#
+
+Temos q criar uma classe q terá os atributos normais de um pageable
+Os dois construtores
+Um normal, contendo os paranauês
+E o outro criado a mão q serve apenas p o json fazer o parse, ele terá um super q é um ArrayList
+No contrutor c as coisas, teremos a anotação <36> q contém o nome dos atributos q são usados num pageable
+Sobreescreverá contendo:  
+       super(content, new PageRequest(<nome usado p mostrar página>,<usado p mostrar quantidade págs> ), <usado p mostrar quantidade de conteúdo>);
+
+
+#PASSO 3#
+
+Trabalhando com o sort
+Ao usar o sort, vc deve usar o tipo do Spring sort naquele construtor q fizemos acima
+P usar o sort vc precisa ir na URL e alterar cm quer q fique sortido e qual página
+Porém, ao fazer isso, ocorrerá um erro, já que, o Sort é serializado cm uma lista de ORder
+Então precisamos de uma classe q deserialize da forma customizada q tamos fazendo
+
+
+#PASSO 4#
+
+Criaremos uma classe q servirá p descerializar, ela extends a classe JsonDeserializer<Sort> e implementaremos o método
+Nele tiraremos o super e escreveremos a seguinte sintaxe:
+
+    @Override
+    public Sort deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException{
+        ArrayNode node= jsonParser.getCodec().readTree(jsonParser);
+        Sort.Order[] orders = new Sort.Order[node.size()];
+        int i = 0;
+        for (JsonNode json : node){
+            orders[i] = new Sort.Order(Sort.Direction.valueOf(json.get("direction").asText()),        //Vai mudar a direção
+                    json.get("property").asText());                                                		     //Vai mudar a propriedade
+            i++;
+        }return new Sort(orders);
+    }
+
+
+#PASSO 5#
+
+Voltaremos na classe q contem as configurações do Pageable e marcaremos o sort c <37> e no retorno, colocaremos ele tb
+Após isso é só usar
+
+
+
+
+=======================================================================================
+#POST(Aula 23)#
+
+Vamos aprender a criar
+
+
+
+#PASSO 1#
+
+Cm a URL dele é diferente, vamos precisar de outro RestTemplate
+Nesse conterá o msm do outro porém com a URL do post
+Ex.:
+
+        RestTemplate restTemplateAdmin = new RestTemplateBuilder()
+                .rootUri("http://localhost:8080/v1/admin/students")
+                .basicAuthorization("Homer", "devdojo")
+                .build();
+
+
+#ESCOLHAS#
+
+Daqui temos três opções, uma é por meio do exchange
+O outro, object
+E por ultimo o entity
+Assim cm o método GET
+
+
+#EXCHANGE#
+
+É p mais flexível cm vimos antes
+
+        Student studentPost = new Student();
+        studentPost.setName("John Wick");
+        studentPost.setEmail("john@pencil.com");
+        ResponseEntity<Student> exchangePost = restTemplateAdmin.exchange("/",
+                HttpMethod.POST, new HttpEntity<>(studentPost, createJSONHeader()), Student.class);
+        System.out.println(exchangePost);
+
+Ele pede um Header fora do método main:
+
+    private static HttpHeaders createJSONHeader() { //Esse método vai criar headers p usarmos por ex no post
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        return headers;
+    }
+
+
+#FOR OBJECT#
+
+        Student studentPostForObject = restTemplateAdmin.postForObject("/", studentPost, Student.class);
+        System.out.println(studentPostForObject);
+
+
+#FOR ENTITY#
+
+        ResponseEntity<Student> studentPostForEntity = restTemplateAdmin.postForEntity("/", studentPost, Student.class);
+        System.out.println(studentPostForEntity);
+
+
+
+
+=======================================================================================
+#PUT AND DELETE(Aula 24)#
+
+Vamos aprender a Atualizar e apagar
+
+
+
+#PASSO 1#
+
+Temos que saber que nos dois casos eles retornam apenas o status, então o método será void
+O método de ambos é bem simples, usando o restTemplate diretamente(O admin, já q nosso sistema tá seguro)
+Já q n terá retorno vindo do método
+E no caso do delete, receberemos o id do student (Presta atemção que ao usar o id, vc tem q por na url ele entre chaves)
+
+
+#PASSO 2#
+
+Assim cm no save, o post recebe um student, então na classe de test nós colocamos a mudança que queremos e o id de qual vai mudar
+No caso do update, é só chamar o dao.update(<student criado acima>);
+No caso do delete, é só chamar o dao.delete(<número que você quer deletar>);

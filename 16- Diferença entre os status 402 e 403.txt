@@ -1,0 +1,2 @@
+402- O servidor n sabe quem vc é
+403- O servidor sabe, mas vc n tem autorização

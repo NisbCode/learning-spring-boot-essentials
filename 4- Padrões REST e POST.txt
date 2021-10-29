@@ -1,0 +1,18 @@
+#O QUE É#
+
+Existem alguns padrões na hr de criar 
+1- O diretório inicial pra chegar até o meu endpoint deve estar no plural
+2- Se vc tiver um endpoint c apenas um método de tipo GET, n precisa pôr um path p ele. Ao ter mais de um, um deles deverá ter um path
+3- É interessante pôr um AutoWired num construtor(Aula 5 1:30)
+4- Métodos devem retornar o status code
+5- Ao criar algo "Usar o POST", vc tem duas opções, a primeira é criar uma nova URL com o conteúdo criado (Achei uma péssima ideia) ou a forma q o William fez
+q é retornando o próprio objeto(Oq eu preferi)
+Como retornar:
+
+    @RequestMapping(method = RequestMethod.POST)
+    public ResponseEntity<?> save(@RequestBody Student student) {
+        Student.studentList.add(student);
+        return new ResponseEntity<>(student, HttpStatus.OK);                            <----- Retornando
+    }
+
+7- Conceito idempotent

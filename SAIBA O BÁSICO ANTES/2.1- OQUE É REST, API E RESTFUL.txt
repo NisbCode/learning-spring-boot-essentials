@@ -1,0 +1,41 @@
+Mostrou o geral daqui: 	https://becode.com.br/o-que-e-api-rest-e-restful/
+
+
+#API#
+
+É básicamente um modo de interações de aplicativos c base numa linha padrão de projeto, ou seja, trata-se de um conjunto de rotinas e padrões estabelecidos e 
+documentados por uma aplicação A, p q outras aplicações consigam usar as funcionalidades da aplicação A, sem conhecer detalhes da implementação do software
+Desta forma, entendemos que as APIs permitem uma interoperabilidade entre aplicações. Em outras palavras, a comunicação entre aplicações e entre os usuários.
+
+
+=======================================================================================
+
+
+#REST#
+
+Resumidamente, o REST consiste em princípios/regras/constraints q, qnd seguidas, permitem a criação de um projeto c interfaces bem definidas
+Desta forma, permitindo, por ex, q aplicações se comuniquem. 
+Isso aconteceu aós uma atualização que visava a semantica de requisições HTTP aproximando assim elas de um padrão mais humanoide:
+
+GET http://www.meusite.com/usuarios
+DELETE http://www.meusite.com/usuarios/jackson
+POST http://www.meusite.com/usuarios –data {nome: joaquim}
+
+Pela simples leitura é possível inferir que no primeiro caso estamos pegando tds os usuários do site, ou seja, teremos uma lista de todos os usuários que estão 
+cadastrados no sistema/site. Já, no segundo caso, estamos apagando (DELETE) o usuário Jackson. No último exemplo, estamos usando o método POST, em q 
+percebemos o envio de dados extras para cadastrar um novo usuário.
+
+Veja o quão simples ficou expressar o que desejamos realizar ao acessar um determinado endereço, usando verbos específicos para URLs específicas e usando dados 
+padronizados, quando necessário. Estes princípios apresentados fazem parte do REST! Em outras palavras, nesses exemplos, temos: uma representação padronizada,
+verbos e métodos usados, bem como, URLs.
+
+
+=======================================================================================
+
+
+#DIFERENÇA DE REST E RESTFUL#
+
+A diferença é apenas gramatical. Em outras palavras, sistemas que utilizam os princípios REST são chamados de RESTful
+
+REST: conjunto de princípios de arquitetura
+RESTful: capacidade de determinado sistema aplicar os princípios de REST.

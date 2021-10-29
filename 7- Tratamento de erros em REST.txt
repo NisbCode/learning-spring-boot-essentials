@@ -1,0 +1,114 @@
+#PRA QUE?#
+
+Nesse caso os erros podem ser bem mais prejudiciais
+Pode ser que seu cliente acabe cagando seu código
+Ou acessando partes que não eram esperadas
+Até temos erros menores por exemplo a falta de uma mensagem legível do erro que ocorreu
+Então é primordial que tenha esse tratamento
+
+
+# 1 PASSO : MENSAGENS PARA ERROS#
+
+Começamos criando uma classe para enviar mensagens de não encontrada
+No nosso caso: ResourceNotFoundException
+Nela, colocamos o <22> acima da classe
+E no endpoint, nos métodos de caso não seja encontrado, a lançamos cm erro 
+Ex.: 
+    @GetMapping(path = "/{id}")
+    public ResponseEntity<?> getStudentById(@PathVariable("id") Long id) {
+        verifyIfStudentExists(id);
+        Student student = studentDAO.findOne(id);
+            throw new ResourceNotFoundException("Student not found for id: " + id);
+    }
+
+Outra coisa que é necessário pensar é que a maior parte de seus métodos vão precisar de determinado id
+P n precisar sair colocando em tds os métodos, é uma boa ideia encapsular no próprio endpoint, um método q irá verificar se aquele id existe
+
+
+#2 PASSO : DEFINA SEU CORPO DE RESPOSTA DE ERROS (HANDLER)#
+
+Usaremos um Handler para moldar as repostas
+P isso precisaremos de uma classe com todos os atributos q queremos usar em nosso corpo de resposta 
+Lá deverá ter seus construtores
+Seus getters
+E seu builder (Vc deve ter baixado o plugin de Builder Generator)
+Dps é só apertar alt+shift+b em td atributo 
+Assim sua classe com os detalhes das informações estará pronta
+
+Agora falta uma classe que lidar
+Nessa classe deverá ter a anotação de <23>
+E os métodos q vc quer q componham seu body, começando com o builder
+Ou seja
+<nome do builder>.<outras coisas q quer>
+
+
+#3 PASSO : GARANTINDO ATOMICIDADE/PRIVACIDADE(TRANSAÇÕES)#
+
+Ao criar tabelas do SB p o BD, temos algumas engines
+Se vc pelo Windows quiser criar uma, não se esqueça de usar no applications. properties a seguinte coisa:
+
+spring.jpa.properties.hibernate.dialect = org.hibernate.dialect.MySQL5Dialect
+
+Acrescente InnoDB entre o MySQL e o Dialect
+
+spring.jpa.properties.hibernate.dialect = org.hibernate.dialect.MySQL5InnoDBDialect
+
+Seguindo dps disso, as vezes temos alguns problemas no funcionamento de alguns métodos, um deles seria caso tentem salvar dois usuários ao msm tempo
+Cm a variável já existe, ocorre uma exceção e nenhum dos dois é salvo
+O certo seria q ao menos um fosse, ocasionando num cancelamento(rollback) do seguinte
+Uma forma q conseguir salvar os dois seria se o id fosse anulado, assim teriamos dois estudantes, mas ainda sim não é oq queremos, queremos apenas um
+Então uma forma de garantir q, caso tentem salvar ambos, ao menos um seja salvo, é usando a seguinte anotação: <25>
+
+Um site q eu achei q ajudou a entender melhor esse: https://www.devmedia.com.br/conheca-o-spring-transactional-annotations/32472
+
+
+#4 PASSO : DECIDINDO QUAIS CAMPOS SERÃO OBRIGATÓRIOS, PK, ETC (VALIDAÇÃO DE CAMPOS)#
+
+Tem várias formas de fazer isso, porém, nós usaremos uma API q já coloca algumas anotações q dizem por vc
+Uma delas é de manter aquele atrubuto, futuro campo, obrigatório <26>
+Logo dps disso é preciso q vc vá ao método e escreva a anotação <27>
+
+Outra coisa interessante q podemos fazer é caso o campo n tenha sido preenchido de forma correta, lançar uma exceção dizendo qual campo e oq deu errado nele
+P isso nós separamos uma classe p erros especificos de não validação
+Criamos duas variáveis nessa classe q conterão a mensagem e o campo
+Adicionamos ela ao builder
+E criamos um tratamento no handler
+Assim lá nós poderiamos dizer cm queremos q fique aquela exceção
+Usamos tb uma lista c .map() justamente p poder pegar as mensagens do q deu errado
+E um delimitador pq podem ocorrer mais de um erro
+Assim os separamos por vírgula
+Um detalhe é q podemos criar mensagens personalizadas pra cada anotação de obrigação 
+Por ex @NotNull(message = "O campo nome é obrigatório")
+
+
+#5 PASSO : PADRONIZANDO ERROS#
+
+Um ex é q fizemos dois handlers p cuidar dos erros , mas se forçarmos qualquer outro erro sem ser esses
+Veremos padrões de escrita diferentes
+
+Primeiro nós vamos criar uma classe c os atributos de cm vai ficar o body da exceção, cm já fizemos pros anteriores e temos q padronizar, só copiar os de lá
+Dps criar o builder(alt+shift+b, dps vc clica em inner e tira o prefix with[no curso nós tb nomeamos p ficar mais fácil por Builder e newBuilder, diquinha se preferir])
+Dps vamos na parte dos handlers e extends da classe ResponseEntityExceptionHandler(Lida c tds as exceções)
+E vamos sobreescrever determinado erro(Lemre-se, p sobreescreve rvc deve ter o msm nome e a msm quantidade de argumentos)
+Assim vc vai ter criado seu próprio tratamento de erro com base num já existente
+
+AGORA VAMOS CRIAR UM HANDLER ÚNICO P TDS AS EXCEÇÕES Q N FOREM TRATADAS PELOS HANDLERS Q TEMOS
+Nós vemos q tds os erros são tratados numa classe única: handleExceptionInternal
+Vamos copiar p sobreescrever o método
+Copiar os atributos q temos no handler anterior e colar nesse
+Retirar o status declarado já q vamos usar oq vier
+Ao fim, nosso método tem q se parecer c isso:
+
+    @Override
+    protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        ErrorDetails errorDetails = ErrorDetails.Builder
+                .newBuilder()
+                .timestamp(new Date().getTime())
+                .status(status.value())              
+                .title("Internal Exception")
+                .detail(ex.getMessage())
+                .developerMessage(ex.getClass().getName())
+                .build();
+
+        return new ResponseEntity<>(errorDetails, headers, status);
+    }

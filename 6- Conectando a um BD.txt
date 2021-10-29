@@ -1,0 +1,66 @@
+#1 PASSO : CRIAR UM BANCO DE DADOS#
+
+Criar um banco de dados no MySQL
+Nesse caso oq criamos se chama school
+
+
+#2 PASSO : DEPENDÊNCIAS#
+
+Adicionar duas dependências de conexão:
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+		</dependency>
+
+
+#3 PASSO : APPLICATION.PROPERTIES#
+
+Devemos pôr algumas configurações de conexão ao banco de dados:
+
+spring.datasource.url=jdbc:mysql://localhost:3306/school?useSSL=false        <----Informações do próprio programa cm porta e etc
+spring.datasource.username=root
+spring.datasource.password=root
+
+spring.datasource.tomcat.test-while-idle=true                                                   <----Manter a coneção ligada enquanto estivermos aq
+spring.datasource.tomcat.validation-query=SELECT 1                                       <---- Mandar um comando de tempos em tempos avisando que ainda estamos aq
+
+spring.jpa.show-sql=true
+
+spring.jpa.hibernate.ddl-auto=update
+
+spring.jpa.properties.hibernate.dialect = org.hibernate.dialect.MySQL5InnoDBDialect   <---Tem um detalhe sobre no documento 7
+
+
+#4 PASSO : ANOTAÇÕES#
+
+Criar a anotação <18> na classe a qual tem as informações básicas necessárias
+No nosso caso a Student
+Dentre as anotações possíveis
+Aí já depende
+Temos p esse caso anotações cm: <18>, <19>, <20>, <21>, <> e <>
+
+
+#5 PASSO : ACESSAR OS DADOS DO BANCO DE DADOS#
+
+Criar uma interface q extends a CrudRepository(Ps.: dps o import é mudado p outro) tendo cm parâmetros a entidade q esse Crud representa e o tipo(Mas os 
+parâmetros continuam)
+(Isso aconteceu pq a interface a qual substituiu o Crud[PagingAndSortingRepository] extends dela, então pelo polimorfismo n muda nd, só acrescenta os métodos 
+dessa interface)
+
+
+#6 PASSO : REALOCANDO DE STUDENT PARA STUDENTREPOSITORY#
+
+Importe a classe e instancie ela pra usar em td o endpoint 
+
+
+#LEMBRETE#
+
+NÃO SE ESQUEÇA QUE O BANCO DE DADOS QUE EU JÁ ESTAVA USANDO JÁ TEM ALGUNS ATRIBUTOS, AO REFAZER OU ETC, LEMBRESE DE RECRIAR
+UM OUTRO BD
+CASO ESTEJA REFAZENDO AS AULAS P REAPRENDER
+SE NÃO OCORRERÁ UM ERRO DE ESPAÇO OBRIGATÓRIO VAZIO
+ISSO PQ TEORICAMENTE VC N CRIOU AINDA ESSE ATRIBUTO MAS NO BD ELE JÁ EXISTE

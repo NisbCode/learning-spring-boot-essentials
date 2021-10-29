@@ -1,0 +1,43 @@
+Tamos aq refazendo as classes de testes p rodar c o token
+Então praticamente copiamos o anterior e modificamos p esse 
+
+#MUDANÇAS#
+
+-Começamos retirando o RestTemplateBuilder pq n vamos usar ele
+-Vamos precisar de um Header já q token usa. Nisso vamos criar 3
+Um q será o p coisas simples de user
+Outro p admin apenas
+E um errado:
+
+    private HttpEntity<Void> protectedHeader;
+    private HttpEntity<Void> adminHeader;
+    private HttpEntity<Void> wrongHeader;
+
+-Vamos criar 3 métodos anotados cm <49> q vão preencher esses atributos:
+
+    @Before
+    public void configProtectedHeaders() {
+        String str = "{\"username\":\"Bart\",\"password\":\"devdojo\"}";      //Note q esse formato é o JSON q vc usou no login
+        HttpHeaders headers = restTemplate.postForEntity("/login", str, String.class).getHeaders();
+        this.protectedHeader = new HttpEntity<>(headers);
+    }
+    @Before
+    public void configAdminHeaders() {
+        String str = "{\"username\":\"Homer\",\"password\":\"devdojo\"}";
+        HttpHeaders headers = restTemplate.postForEntity("/login", str, String.class).getHeaders();
+        this.adminHeader = new HttpEntity<>(headers);
+    }
+
+    @Before
+    public void configWrongHeaders() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization","11111");
+        this.wrongHeader = new HttpEntity<>(headers);
+    }
+
+
+-Não é preciso mais saber o port dos métodos
+-O restTemplate n precisa mais q vc diga ou adicione alguém (Mas ainda precisa do setup)
+-Vc n vai mais trabalhar c getEntity ou ect, apenas exchange q pede duas mudanças:
+Q vc diga o tipo do método e q passe o Header q será o criado acima
+-Modificar a lógica dos métodos p q agr esteja direcionada aos tokens

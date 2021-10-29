@@ -1,0 +1,6 @@
+
+
+#O QUE É#
+
+O Hibernate é um framework criado p facilitar a persistência de dados em Java, podendo ser usado p aplicações em desktop e web. Para isso, traz uma solução em 
+ORM que abstrai do programador muitas tarefas repetitivas, Também é de fácil configuração, normalmente feita em XML

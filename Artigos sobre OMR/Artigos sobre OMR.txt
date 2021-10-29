@@ -1,0 +1,5 @@
+https://www.devmedia.com.br/introducao-a-jpa-java-persistence-api/28173
+
+https://www.devmedia.com.br/orm-object-relational-mapping-revista-easy-net-magazine-28/27158#final
+
+https://www.devmedia.com.br/orm-object-relational-mapper/19056

@@ -1,0 +1,71 @@
+Assistir: https://www.youtube.com/watch?v=Q2QdkiX6p_Y&t=3481s
+Baixar arquivos: https://github.com/EduardoPires/SOLID
+
+
+São 5 princípios de formas de previnir um código falho, ou seja, um código q caso algo mude, não quebre ele e sim apenas ocorra algumas mudanças simples ou 
+não altere nd
+A duplicação de um códigos 
+A dificuldade na testabilidade/criação de testes de unidades
+Código sem estrutura ou padrão
+Dificuldades de isolar funcionalidades
+
+
+#"S" SRP - SINGLE RESPONSABILITY PRINCIPLE#
+
+	"Uma classe deve ter um, e apenas um, motivo para ser modificada"
+
+Ou seja,
+Se uma classe tem um motivo de ser modificada, então ela tem uma responsabilidade
+Se a classe tem dois motivos, então ela tem duas responsabilidades, logo, tá violando o 1 princípio
+Se uma classe valida um cliente, ela NÃO deve conectar a um banco, etc, apenas validar
+
+
+#"O" OCP - OPEN CLOSED PRINCIPLE#
+
+	"Entidades de suftware(classes, módulos, funções, etc) devem estar abertas para extensão, mas fechadas para modificação"
+
+Ou seja,
+Usar formas q impeçam q determinado método mude e vc tenha q mudar em tds
+Um ex disso é criar um método sobreescrito de um abstrato, já pensar ele pra caso vc tenha q adicionar mais um parâmetro, ou mudar o body do método
+
+
+#"L" LSP - LISKOV SUBSTITUTION PRINCIPLE#
+
+	"Se q(x) é uma propriedade demonstrável dos objetos x e tipo T. Então q(y) deve ser verdadeiro para os objetos y de tipo S onde S é subtipo de T"
+						TRADUZINDO
+	"Uma classe base deve poder ser substituída pela sua derivada"
+						OU SEJA,
+	"Se nada como pato, voa como pato, porém precisa de pilhas, provavelmente vc possui um problema de abstração"
+
+Se vc tiver uma classe quadrado herdando uma classe retangulo, ocorre um erro, pq a classe pai retangulo por mais q ela tenha msm calculo de área, msm núm de 
+lados e etc
+Vc poderia então sobreescrever um método pai e modificar p q ele calcule c os lados iguais
+O quadrado tem lados iguais, vc n deveria herdar já q vc vai alterar métodos da classe pai p forçar q o quadrado tem lados iguais, uma classe filha n deve modificar
+métodos da classe pai
+Logo, ambas classes quadrado e retangulo n deveriam ter polimorfismo
+
+DÚVIDA: PODERIAMOS SOBREESCREVER UM MÉTODO?
+
+
+#"I" ISP - INTERFACE SEGREGATION PRINCIPLE#
+
+	"Clientes não devem ser forçados a depender de métodos que não usam"
+
+Ou seja, 
+Uma classe não deveria ser forçada a depender de um método q ela n vai usar em casos de interfaces q as obrigam a sobreescrever métodos
+Por isso é melhor ter várias interfaces específicas do q uma interface única
+Em alguns casos é melhor vc criar duas interfaces diferentes tendo determinados métodos do q apenas uma obrigando classes a por um método desnecessário
+
+
+#"D" DIP - DEPENDENCY INVERSION PRINCIPLE#
+
+	"Módulos de alto nível não devem depender de módulos de baixo nível. Ambos devem depender de abstrações; Abstrações não devem depender de
+	detalhes. Detalhes devem depender de abstrações"
+
+Ou seja,
+Uma class ClienteService não deveria depender de ClienteRepository, num exemplo onde a classe ClienteSevice precisa do ClienteRepository pra se conectar
+E sim de uma abstração dela
+Quando vc coloca p um método depender da abstração de uma interface e não mais das classes concretas
+Assim
+Se um dia vc tiver q mudar a ClienteRepository, vc n vai mais afetar a ClienteService, a implementação vai alterar td por vc
+Isso acontece pq vc taria implementando um método q assim q vc mudar lá, ele já vai mudar td o resto por vc

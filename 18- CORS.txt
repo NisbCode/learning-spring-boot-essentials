@@ -1,0 +1,31 @@
+#O QUE É#
+
+Cross-Origin Request Sharing, ou seja, 
+imagine q vc tem um servidor A (por ex, o devdojo.com.br) onde tá a sua aplicação rest 
+e o seu cliente tá um servidor B (por ex o localhost) fazendo uma requisição lá
+Se vc tentar fazer uma requisição javascript do B p o A, por padrão ela será bloqueada
+Então qualquer requisição javascript q vc fizer, vc vai ser bloqueado, e verá essa mensagem: 
+
+Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at http://localhost:2061/login. (Reason: CORS header 
+‘Access-Control-Allow-Origin’ missing).
+
+O postman n ocorre isso pq ele n usa o javascript
+
+
+#COMO LIDAR#
+
+P evitar q seu cliente n consiga acessar vc por estar em outro servidor
+Vc deve fazer uma configuração na sua classe de configuração de segurança
+Na sobreescrita do método configure 
+Logo após usar Http cors:
+
+.configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues())
+
+
+Deixando o mpetodo parecido c isso:
+
+@Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.cors().configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues())
+                .and().csrf().disable()
+                .authorizeRequests()

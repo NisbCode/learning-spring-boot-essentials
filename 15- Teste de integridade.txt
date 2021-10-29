@@ -1,0 +1,70 @@
+#O QUE SÃO#
+
+São testes direto no endpoint 
+
+
+#PASSO 1#
+
+Marcaremos essa classe de tets de endpoint cm <38> e <43>
+
+
+#ESCOLHAS#
+
+Podemos:
+OU fazer a injeção do TestRestTemplate q é igual ao normal mas mais leve já q é um test apenas e marcar ele cm <7>
+OU usar uma injeção do MockMvc tb marcado cm <7> e obriga a colocar na classe a anotação <47>
+
+
+#PASSO 1.1: CONTINUAÇÃO INDEPENDENTE DA ESCOLHA#
+
+E criar um int q vai ficar c o port anotado c <44>, claro, se quiser, pq o próprio <43> já cria e usa sozinho
+Tb devemos criar uma injeção do repository contendo a anotação <46>
+Dps disso teremos q ter em mente q o nosso endpoint tá td seguro
+Então vamos criar uma classe static marcada cm <45>. Nessa classe q conterá apenas um método q retorna um RestTemplateBuilder usando a autorização q 
+tavamos do admin até agr. O método deve ser marcado cm <48>
+
+Assim, td vez q usarmos o test, ele vai logar sozinho naquela autorização
+
+
+#PASSO 2: CRIANDO O TEST TestRestTemplate#
+
+Saiba q cada método de test terá a anotação <41>
+Eles vão basicamente agir no msm padrão
+Eles criam um usuário pelo restTemplase usando basic
+Usam o ResponseEntity p pegar o resultado e dar o caminho p a ação
+E usam o assertThat(Ñ se esqueça q o mais comum é importarem staticamente o Assertions, se vc ver agt usar nas aulas é pq o prof quis q nós soubessemos de onde
+vem)
+E esse método diz oq deve ser conferidos
+
+Dica: Os métodos vão seguir as lógicas do q deve ou n ser retornado dependendo de cada situação possível
+Isso torna os métodos cada vez mais repetitivos
+P contornar isso, nós usamos a anotação <49>
+Lá vc vai colocar as linhas de código q irão se repetir p n ficar colocando em tds e ainda p impedir q o código fique sujo
+
+
+
+
+#PASSO 2: CRIANDO O TEST MockMvc#
+
+Primeiro nós devemos importar uma dependencia:
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
+            <version>4.2.3.RELEASE</version>
+            <scope>test</scope>
+        </dependency>
+
+
+Isso foi necessário pq o nosso restTemplate tinha um usuário, mas esse n
+Então agr 
+Vc vai no método e anota ele cm <50>
+Criando o método, vc diz oq ele vai usar
+Oq vai fazer
+Usando qual valor
+Em qual caminho
+E oq ele expera receber de status:
+
+        mockMvc.perform(MockMvcRequestBuilders
+                .delete("/v1/admin/students/{id}", -1L))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());

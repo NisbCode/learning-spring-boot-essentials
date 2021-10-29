@@ -1,0 +1,52 @@
+Devido a uma certa lerdeza minha
+Teremos uma série de dcumentos dizendo sobre os assuntos mais variados pra me situar melhor sobre Spring Boot
+
+					ORGANIZAÇÃO DE ESTUDOS PRA QUE VEJA SOBRE
+
+1- princípios e boas práticas : 		https://becode.com.br/o-que-e-api-rest-e-restful/
+
+2- REST : 				https://www.treinaweb.com.br/blog/rest-nao-e-simplesmente-retornar-json-indo-alem-com-apis-rest/
+
+3- princípios e boas práticas : 		https://blog.caelum.com.br/rest-principios-e-boas-praticas/
+
+4- design de API REST :		https://docs.microsoft.com/pt-br/azure/architecture/best-practices/api-design
+
+5- spring boot by tt : 			https://www.tutorialspoint.com/spring_boot/
+
+6- ORMs - 			https://www.devmedia.com.br/orm-object-relational-mapper/19056
+				https://www.devmedia.com.br/orm-object-relational-mapping-revista-easy-net-magazine-28/27158#funciona
+7- Hibernate :			https://www.translatetheweb.com/?from=pt&to=en&ref=SERP&refd=www.bing.com&dl=en&rr=UC&a=https%3a%2f%2fwww.devmedia.com.br%2fdesenvolvendo-com-hibernate%2f14756
+Diferença de JPA e Hibernate: 		https://thoughts-on-java.org/difference-jpa-hibernate-eclipselink/
+
+					TÓPICOS PRA PROCURAR POR MIM
+
+tópicos:
+
+Upload de Imagens:			https://www.mkyong.com/spring-boot/spring-boot-file-upload-example-ajax-and-rest/
+Spring Boot Web (API REST):		https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html
+ORMs
+
+JPA				https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#jpa.repositories
+
+Spring Boot
+JDBC Template: 			https://docs.spring.io/spring-data/jdbc/docs/1.0.9.RELEASE/reference/html/#jdbc.auditing
+Padrões:
+				https://www.tutorialspoint.com/design_pattern/facade_pattern.htm#
+Outros padrões:			https://www.devmedia.com.br/diferenca-entre-os-patterns-po-pojo-bo-dto-e-vo/28162
+
+Observer
+
+Dao				https://www.devmedia.com.br/dao-pattern-persistencia-de-dados-utilizando-o-padrao-dao/30999
+DTO:				https://pt.stackoverflow.com/questions/308099/java-dto-com-spring-boot-2
+Façade
+				https://www.devmedia.com.br/padrao-de-projeto-facade-em-java/26476
+Programação reativa
+
+ModelMapper			http://modelmapper.org/
+
+Mapeamentos uni ou bidimensionais:	https://pt.stackoverflow.com/questions/234755/diferen%c3%a7as-onetomany-manytomany-manytoone-onetoone
+Ajuda pra aprender mais 		https://www.xandaodownload.net/spring-boot-hibernate-rest-ionic-jwt-s3-mysql-mongodb/#more-51447
+
+https://www.oracle.com/technetwork/pt/articles/dsl/crud-rest-sb2-hibernate-5302424-ptb.html
+https://pt.stackoverflow.com/questions/305110/como-salvar-imagens-no-banco-de-dados-usando-spring-boot
+https://mkyong.com/spring-boot/spring-boot-file-upload-example/
